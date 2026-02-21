@@ -56,6 +56,12 @@
             padding-bottom: 6px;
             border-bottom: 2px solid #F0E0F0;
         }
+        h3 {
+            color: var(--purple);
+            font-size: 1.1em;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
         p, ul {
             margin-bottom: 16px;
         }
@@ -72,6 +78,16 @@
             border-radius: 0 8px 8px 0;
             margin: 20px 0;
         }
+        .service-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 16px 0;
+            box-shadow: 0 2px 12px rgba(140, 28, 135, 0.08);
+        }
+        .service-card h3 {
+            margin-top: 0;
+        }
         .footer {
             text-align: center;
             padding: 40px 20px;
@@ -80,6 +96,12 @@
             border-top: 1px solid #E8D8E8;
         }
         a { color: var(--purple); }
+        code {
+            background: #F5EAF5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -89,11 +111,11 @@
     </div>
 
     <div class="container">
-        <p class="updated">Last updated: February 19, 2026</p>
+        <p class="updated">Last updated: February 21, 2026</p>
 
-        <p class="intro">Love Llama is committed to protecting your privacy. This policy explains what data we collect, how it's used, and your rights.</p>
+        <p class="intro">Love Llama is committed to protecting your privacy. This policy explains what data we collect, how it's used, who it's shared with, and your rights.</p>
 
-        <h2>Data We Collect</h2>
+        <h2>1. Data We Collect</h2>
         <p>Love Llama processes the following data locally on your device:</p>
         <ul>
             <li>Conversation text you paste or scan via screenshots</li>
@@ -102,56 +124,101 @@
             <li>Analysis history and results</li>
         </ul>
         <div class="highlight">
-            All data is stored on-device using iOS Data Protection encryption (NSFileProtectionComplete). Your data is encrypted when your device is locked.
+            All data is stored on-device using encrypted storage (iOS Data Protection). Love Llama does not collect, store, or transmit data to any server we operate.
         </div>
 
-        <h2>Third-Party Services</h2>
-        <p>When you use certain features, data is sent to third-party AI services for analysis:</p>
+        <h2>2. How We Collect Data</h2>
+        <p>Data is collected only through your direct actions within the app:</p>
         <ul>
-            <li><strong>Anthropic (Claude API)</strong> &mdash; Conversation text is sent for scam pattern analysis. <a href="https://www.anthropic.com/privacy" target="_blank">Anthropic's privacy policy</a> applies.</li>
-            <li><strong>Reality Defender</strong> &mdash; Photos are uploaded for AI-generated image detection. <a href="https://www.realitydefender.com/privacy-policy" target="_blank">Reality Defender's privacy policy</a> applies.</li>
+            <li><strong>Text input:</strong> You manually paste or type conversation text, or select a screenshot for OCR text extraction (performed on-device using Apple's Vision framework)</li>
+            <li><strong>Photo selection:</strong> You manually select a photo from your photo library using Apple's PhotosPicker</li>
+            <li><strong>Checklist input:</strong> You manually toggle checklist items</li>
         </ul>
-        <p>These services process data according to their own privacy policies. We only send the minimum data needed for analysis. No personal identifiers are included.</p>
-        <p>You must explicitly consent to this data processing before these features are enabled. You can revoke consent at any time from Settings.</p>
+        <p>No data is collected automatically, in the background, or without your direct initiation.</p>
 
-        <h2>API Keys</h2>
-        <p>Your API keys for Anthropic and Reality Defender are stored securely in the iOS Keychain with hardware-level encryption (<code>kSecAttrAccessibleWhenUnlockedThisDeviceOnly</code>). Keys are never sent to our servers or shared with any party other than their respective services.</p>
+        <h2>3. Third-Party AI Services &mdash; Data Sharing</h2>
+        <p>Love Llama optionally integrates with two third-party AI services. Data is only shared with these services when (a) you have added an API key for that service, and (b) you have given explicit in-app permission to share data with that specific service. You are prompted for permission before any data leaves your device.</p>
 
-        <h2>Data Storage &amp; Security</h2>
+        <div class="service-card">
+            <h3>Chat Analysis &mdash; Anthropic (Claude API)</h3>
+            <ul>
+                <li><strong>What is sent:</strong> The conversation text you entered or extracted from a screenshot. No personal identifiers, contact names, platform names, or device information are included.</li>
+                <li><strong>Where it is sent:</strong> Anthropic's Claude Messages API at <code>api.anthropic.com</code></li>
+                <li><strong>Who receives it:</strong> Anthropic, PBC (San Francisco, CA)</li>
+                <li><strong>Why:</strong> To analyze conversation text for romance scam patterns using AI</li>
+                <li><strong>Their policy:</strong> <a href="https://www.anthropic.com/policies/privacy" target="_blank">anthropic.com/policies/privacy</a></li>
+                <li><strong>Without an API key:</strong> Analysis is performed entirely on-device using local pattern matching. No data is sent anywhere.</li>
+            </ul>
+        </div>
+
+        <div class="service-card">
+            <h3>Photo Verification &mdash; Reality Defender</h3>
+            <ul>
+                <li><strong>What is sent:</strong> The photo image you selected. Image EXIF metadata is stripped. No file names, personal information, or device information are included.</li>
+                <li><strong>Where it is sent:</strong> Reality Defender's API at <code>api.prd.realitydefender.xyz</code></li>
+                <li><strong>Who receives it:</strong> Reality Defender, Inc. (New York, NY)</li>
+                <li><strong>Why:</strong> To detect whether a profile photo was generated by AI</li>
+                <li><strong>Their policy:</strong> <a href="https://www.realitydefender.com/privacy-policy" target="_blank">realitydefender.com/privacy-policy</a></li>
+                <li><strong>Without an API key:</strong> Analysis is performed entirely on-device using Apple's Vision framework and image heuristics. No data is sent anywhere.</li>
+            </ul>
+        </div>
+
+        <p>Both third-party services process data according to their own privacy policies. Anthropic and Reality Defender both provide protections for user data, including not using API data to train their models.</p>
+
+        <h2>4. User Consent &amp; Permissions</h2>
+        <p>Love Llama requires your explicit permission before sharing data:</p>
         <ul>
-            <li>All analysis history is stored locally on your device</li>
+            <li>On first launch, a consent screen explains all third-party data sharing</li>
+            <li>Before the first time data is sent to each third-party service, a specific alert explains exactly what data will be sent and to whom</li>
+            <li>You can choose "Analyze Locally Only" at any prompt to keep all data on-device</li>
+            <li>You can revoke all data processing consent at any time in Settings</li>
+            <li>Revoking consent immediately stops all third-party data sharing</li>
+        </ul>
+        <div class="highlight">
+            All features work without any API keys using on-device analysis only.
+        </div>
+
+        <h2>5. API Keys</h2>
+        <p>Your API keys for Anthropic and Reality Defender are stored securely in the iOS Keychain with hardware-level encryption (<code>kSecAttrAccessibleWhenUnlockedThisDeviceOnly</code>). Keys are only used to authenticate requests to their respective services and are never sent to our servers or shared with any other party.</p>
+
+        <h2>6. Data Storage &amp; Security</h2>
+        <ul>
+            <li>All analysis history is stored locally on your device only</li>
             <li>Data is encrypted at rest using NSFileProtectionComplete</li>
-            <li>No data is backed up to external servers</li>
+            <li>No data is backed up to our servers (no servers exist)</li>
             <li>You can delete all data at any time from Settings</li>
+            <li>Photos stored in history are saved as compressed JPEG data on-device only</li>
         </ul>
 
-        <h2>No Tracking or Analytics</h2>
+        <h2>7. No Tracking or Analytics</h2>
         <p>Love Llama does <strong>not</strong>:</p>
         <ul>
-            <li>Track your activity</li>
-            <li>Collect analytics or usage data</li>
-            <li>Use advertising identifiers</li>
-            <li>Share data with advertisers</li>
-            <li>Use cookies or tracking pixels</li>
+            <li>Track your activity or behavior</li>
+            <li>Collect analytics, crash reports, or usage data</li>
+            <li>Use advertising identifiers (IDFA)</li>
+            <li>Share data with advertisers or data brokers</li>
+            <li>Use cookies, tracking pixels, or fingerprinting</li>
+            <li>Contain any third-party analytics SDKs</li>
         </ul>
 
-        <h2>Your Rights</h2>
+        <h2>8. Your Rights</h2>
         <p>You have full control over your data:</p>
         <ul>
             <li>Delete all stored data from Settings at any time</li>
-            <li>Remove API keys at any time</li>
+            <li>Remove API keys at any time to stop all third-party sharing</li>
             <li>Revoke data processing consent at any time</li>
             <li>Uninstall the app to remove all local data</li>
+            <li>Use all features in local-only mode without sharing any data</li>
         </ul>
 
-        <h2>Children's Privacy</h2>
+        <h2>9. Children's Privacy</h2>
         <p>Love Llama is not intended for children under 13. We do not knowingly collect data from children.</p>
 
-        <h2>Changes to This Policy</h2>
-        <p>We may update this privacy policy from time to time. Any changes will be reflected on this page with an updated date. Continued use of the app after changes constitutes acceptance of the updated policy.</p>
+        <h2>10. Changes to This Policy</h2>
+        <p>If we update this privacy policy, we will update the "Last updated" date above. Continued use of the app after changes constitutes acceptance of the revised policy.</p>
 
-        <h2>Contact Us</h2>
-        <p>For questions about this privacy policy, contact us at:</p>
+        <h2>11. Contact</h2>
+        <p>For questions about this privacy policy or your data, contact us at:</p>
         <p><a href="mailto:lovellama.app@gmail.com">lovellama.app@gmail.com</a></p>
     </div>
 

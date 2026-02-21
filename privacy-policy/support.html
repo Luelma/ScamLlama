@@ -79,7 +79,7 @@
 
         <div class="card">
             <h3>Do I need API keys to use Love Llama?</h3>
-            <p>The Red Flag Checklist works without any API keys. For AI-powered chat analysis, you need an Anthropic API key. For photo verification, you need a Reality Defender API key. Both can be obtained from their respective websites.</p>
+            <p>No! All features work fully offline without any API keys. Chat analysis uses a built-in local pattern scanner, photo verification uses on-device image analysis via Apple's Vision framework, and the Red Flag Checklist is entirely local. Adding API keys for Anthropic (chat) and Reality Defender (photo) enhances accuracy with AI-powered analysis, but they're completely optional.</p>
         </div>
 
         <div class="card">
@@ -101,8 +101,13 @@
         </div>
 
         <div class="card">
-            <h3>Does chat analysis work without internet?</h3>
-            <p>Yes! Love Llama includes a local pattern scanner with 300+ romance scam indicators that works entirely offline. The AI-powered deep analysis via Claude requires internet, but the local scanner provides instant results regardless.</p>
+            <h3>Does Love Llama work without internet?</h3>
+            <p>Yes! All features work fully offline. Chat analysis uses a local pattern scanner with 300+ romance scam indicators. Photo verification uses on-device image analysis powered by Apple's Vision framework. The Red Flag Checklist is entirely local. Adding optional API keys enhances results with AI, but everything works without them.</p>
+        </div>
+
+        <div class="card">
+            <h3>What data is shared with third parties?</h3>
+            <p>Only if you add an API key and explicitly approve sharing at the point of use. Chat text can be sent to Anthropic's Claude API, and photos can be sent to Reality Defender's API. You're always asked before any data leaves your device, and you can choose "Analyze Locally Only" instead. See our <a href="index.html">Privacy Policy</a> for full details.</p>
         </div>
     </div>
 
