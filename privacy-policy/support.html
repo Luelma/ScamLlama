@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Llama - Support</title>
+    <style>
+        :root {
+            --purple: #8C1C87;
+            --red: #ED4545;
+            --bg: #FDF6FF;
+            --text: #2D2D2D;
+            --muted: #6B6B6B;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--purple), var(--red));
+            color: white;
+            padding: 60px 20px 40px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 8px; }
+        .header p { opacity: 0.9; font-size: 1.1em; }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+        }
+        h2 {
+            color: var(--purple);
+            font-size: 1.4em;
+            margin-top: 36px;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #F0E0F0;
+        }
+        p, ul { margin-bottom: 16px; }
+        ul { padding-left: 24px; }
+        li { margin-bottom: 8px; }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 2px 12px rgba(140, 28, 135, 0.08);
+        }
+        .card h3 { color: var(--purple); margin-bottom: 8px; }
+        a { color: var(--purple); }
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--muted);
+            font-size: 0.9em;
+            border-top: 1px solid #E8D8E8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Love Llama</h1>
+        <p>Support</p>
+    </div>
+
+    <div class="container">
+        <h2>Contact Us</h2>
+        <div class="card">
+            <h3>Email Support</h3>
+            <p>For bugs, feature requests, or general questions:</p>
+            <p><a href="mailto:lovellama.app@gmail.com">lovellama.app@gmail.com</a></p>
+        </div>
+
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="card">
+            <h3>Do I need API keys to use Love Llama?</h3>
+            <p>The Red Flag Checklist works without any API keys. For AI-powered chat analysis, you need an Anthropic API key. For photo verification, you need a Reality Defender API key. Both can be obtained from their respective websites.</p>
+        </div>
+
+        <div class="card">
+            <h3>Where can I get API keys?</h3>
+            <ul>
+                <li><strong>Anthropic:</strong> <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></li>
+                <li><strong>Reality Defender:</strong> <a href="https://app.realitydefender.ai" target="_blank">app.realitydefender.ai</a></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>Is my data safe?</h3>
+            <p>Yes. All data is stored locally on your device with iOS encryption. API keys are stored in the secure Keychain. We don't collect analytics or track your usage. See our <a href="index.html">Privacy Policy</a> for details.</p>
+        </div>
+
+        <div class="card">
+            <h3>How do I delete my data?</h3>
+            <p>Go to Settings &rarr; Data &amp; Privacy &rarr; Delete All Data. This removes all conversations, photo checks, checklist sessions, and API keys. Alternatively, uninstalling the app removes all local data.</p>
+        </div>
+
+        <div class="card">
+            <h3>Does chat analysis work without internet?</h3>
+            <p>Yes! Love Llama includes a local pattern scanner with 300+ romance scam indicators that works entirely offline. The AI-powered deep analysis via Claude requires internet, but the local scanner provides instant results regardless.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2026 Love Llama. All rights reserved.</p>
+        <p><a href="index.html">Privacy Policy</a></p>
+    </div>
+</body>
+</html>

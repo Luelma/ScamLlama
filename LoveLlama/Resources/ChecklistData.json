@@ -1,0 +1,151 @@
+{
+  "items": [
+    {
+      "id": "comm_refuses_video",
+      "title": "Refuses video calls or always has excuses",
+      "description": "A real person who is interested in you will make time for a video call. Scammers avoid video because they don't look like their photos.",
+      "weight": 4.0,
+      "category": "Communication"
+    },
+    {
+      "id": "comm_move_off_app",
+      "title": "Wants to move off the dating app quickly",
+      "description": "Scammers push to move to WhatsApp, Telegram, or text to avoid dating app moderation and detection systems.",
+      "weight": 3.0,
+      "category": "Communication"
+    },
+    {
+      "id": "comm_grammar_inconsistent",
+      "title": "Grammar/spelling inconsistent with claimed background",
+      "description": "Claims to be American-born but writes with unusual grammar patterns common in non-native English speakers.",
+      "weight": 2.0,
+      "category": "Communication"
+    },
+    {
+      "id": "comm_scripted_messages",
+      "title": "Messages feel scripted or generic",
+      "description": "Responses don't reference specific things you've said, or feel like they could be sent to anyone. Scammers often copy-paste from scripts.",
+      "weight": 3.0,
+      "category": "Communication"
+    },
+    {
+      "id": "comm_ai_generated",
+      "title": "Messages seem AI-generated (ChatGPT-like)",
+      "description": "Messages are overly polished, use therapeutic buzzwords ('emotional connection', 'safe space', 'navigate this journey'), or have unnaturally perfect grammar and structure. Real people text casually with typos and fragments.",
+      "weight": 4.0,
+      "category": "Communication"
+    },
+    {
+      "id": "comm_broken_camera",
+      "title": "Claims their camera is broken",
+      "description": "The 'broken camera' excuse is one of the most common scammer tactics to avoid showing their real face on video.",
+      "weight": 4.0,
+      "category": "Communication"
+    },
+    {
+      "id": "emo_love_fast",
+      "title": "Declares love very quickly (within days or weeks)",
+      "description": "Love bombing is a manipulation tactic where someone overwhelms you with affection to fast-track emotional attachment and lower your defenses.",
+      "weight": 4.0,
+      "category": "Emotional"
+    },
+    {
+      "id": "emo_destiny_talk",
+      "title": "Talks about destiny, soulmates, or 'God sent you to me'",
+      "description": "Scammers use spiritual and fate-based language to create a false sense of deep connection and make you feel the relationship is meant to be.",
+      "weight": 3.0,
+      "category": "Emotional"
+    },
+    {
+      "id": "emo_guilt_trips",
+      "title": "Gets upset or guilt-trips when questioned",
+      "description": "When you ask reasonable questions or express doubt, they become defensive, sad, or angry to make you feel bad for being cautious.",
+      "weight": 4.0,
+      "category": "Emotional"
+    },
+    {
+      "id": "emo_isolation",
+      "title": "Tries to isolate you from friends and family",
+      "description": "Scammers don't want you talking to people who might recognize the scam. They may say your friends are jealous or don't understand your love.",
+      "weight": 5.0,
+      "category": "Emotional"
+    },
+    {
+      "id": "emo_trust_guilt",
+      "title": "Makes you feel guilty for not trusting them",
+      "description": "Flipping the script to make your healthy skepticism seem like a character flaw is a classic manipulation technique.",
+      "weight": 3.0,
+      "category": "Emotional"
+    },
+    {
+      "id": "id_military_overseas",
+      "title": "Claims to be military deployed overseas",
+      "description": "The military deployment story is extremely common in romance scams. It explains why they can't meet, can't video call, and may need money.",
+      "weight": 4.0,
+      "category": "Identity"
+    },
+    {
+      "id": "id_too_perfect",
+      "title": "Profile seems too perfect or too attractive",
+      "description": "Scammers use stolen photos of very attractive people. If their profile seems like a model or too good to be true, it probably is.",
+      "weight": 2.0,
+      "category": "Identity"
+    },
+    {
+      "id": "id_vague_details",
+      "title": "Vague or inconsistent personal details",
+      "description": "They give conflicting information about their job, location, family, or background because they're managing multiple fake identities.",
+      "weight": 3.0,
+      "category": "Identity"
+    },
+    {
+      "id": "id_cant_meet",
+      "title": "Cannot meet in person, always has excuses",
+      "description": "Constant cancellations and excuses for not meeting are a hallmark of scammers who don't exist as they claim.",
+      "weight": 4.0,
+      "category": "Identity"
+    },
+    {
+      "id": "id_stock_photos",
+      "title": "Uses stock-photo-quality profile pictures",
+      "description": "Professional-looking photos with perfect lighting and poses may be stolen from models, influencers, or stock photo sites.",
+      "weight": 3.0,
+      "category": "Identity"
+    },
+    {
+      "id": "fin_asks_money",
+      "title": "Asks for money for any reason",
+      "description": "This is the ultimate red flag. A real romantic interest will never ask you for money, especially someone you haven't met in person.",
+      "weight": 5.0,
+      "category": "Financial"
+    },
+    {
+      "id": "fin_crypto_investment",
+      "title": "Mentions cryptocurrency investment opportunities",
+      "description": "This is the hallmark of a 'pig butchering' scam where they build trust then lure you into a fake crypto investment platform.",
+      "weight": 5.0,
+      "category": "Financial"
+    },
+    {
+      "id": "fin_emergency",
+      "title": "Has an 'emergency' requiring financial help",
+      "description": "Medical emergencies, stuck at customs, legal trouble — scammers create urgent scenarios that tug at your heartstrings and demand immediate money.",
+      "weight": 5.0,
+      "category": "Financial"
+    },
+    {
+      "id": "fin_forward_money",
+      "title": "Asks you to receive or forward money or packages",
+      "description": "This makes you an unwitting money mule in a money laundering scheme, which is illegal and can result in criminal charges against you.",
+      "weight": 5.0,
+      "category": "Financial"
+    },
+    {
+      "id": "fin_gift_cards",
+      "title": "Requests gift cards as payment method",
+      "description": "Gift cards are untraceable and a favorite payment method for scammers. No legitimate person or business asks for payment in gift cards.",
+      "weight": 5.0,
+      "category": "Financial"
+    }
+  ]
+}
