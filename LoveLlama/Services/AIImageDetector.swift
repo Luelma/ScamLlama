@@ -82,8 +82,8 @@ class AIImageDetector {
         let status: String
         switch localResult.riskLevel {
         case .low: status = "AUTHENTIC"
-        case .medium: status = "SUSPICIOUS"
-        case .high, .critical: status = "FAKE"
+        case .medium, .high: status = "SUSPICIOUS"
+        case .critical: status = "FAKE"          // Only label FAKE when evidence is very strong
         }
 
         return PhotoDetectionResult(

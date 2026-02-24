@@ -42,12 +42,12 @@ enum ImageCheckType: String, CaseIterable {
 
     var weight: Double {
         switch self {
-        case .exifMetadata: return 2.0
-        case .faceSymmetry: return 3.0
-        case .backgroundConsistency: return 1.5
+        case .exifMetadata: return 0.8           // Weak signal — most shared photos lack EXIF
+        case .faceSymmetry: return 2.5           // Moderate signal
+        case .backgroundConsistency: return 1.0  // Weak — phone cameras have deep DOF naturally
         case .colorDistribution: return 1.0
-        case .textureUniformity: return 1.5
-        case .sharpnessPattern: return 1.0
+        case .textureUniformity: return 1.2
+        case .sharpnessPattern: return 0.8       // Weak — computational photography produces uniform sharpness
         }
     }
 }
@@ -154,21 +154,22 @@ struct LocalImageAnalyzer {
 
         let missingRatio = Double(missingFields) / Double(totalFields)
 
-        // If EXIF is completely absent, that's highly suspicious
+        // If EXIF is completely absent — common for photos shared via social media,
+        // messaging apps, screenshots, and web downloads. Weak signal on its own.
         if exif == nil && tiff == nil {
             return ImageSuspicionFlag(
                 type: .exifMetadata,
-                finding: "No camera metadata found — AI-generated images typically lack EXIF data",
-                suspicionLevel: 0.8
+                finding: "No camera metadata found — note: photos shared via social media or messaging apps often lose metadata",
+                suspicionLevel: 0.4
             )
         }
 
-        // Partially missing
-        if missingRatio > 0.6 {
+        // Partially missing — even weaker signal
+        if missingRatio > 0.7 {
             return ImageSuspicionFlag(
                 type: .exifMetadata,
                 finding: "Most camera metadata fields are missing (\(missingFields)/\(totalFields))",
-                suspicionLevel: min(missingRatio * 0.7, 0.7)
+                suspicionLevel: min(missingRatio * 0.4, 0.4)
             )
         }
 
@@ -238,12 +239,12 @@ struct LocalImageAnalyzer {
         let combinedSymmetry = (symmetryRatio + sizeRatio) / 2.0
 
         // Natural faces typically have 0.85-0.95 symmetry
-        // AI faces often have >0.97
-        if combinedSymmetry > 0.96 {
+        // AI faces often have >0.98 (raised threshold — some real faces are naturally symmetric)
+        if combinedSymmetry > 0.97 {
             return ImageSuspicionFlag(
                 type: .faceSymmetry,
                 finding: "Face shows unusually high bilateral symmetry (\(Int(combinedSymmetry * 100))%) — common in AI-generated faces",
-                suspicionLevel: min((combinedSymmetry - 0.96) * 15.0 + 0.5, 0.9)
+                suspicionLevel: min((combinedSymmetry - 0.97) * 12.0 + 0.4, 0.8)
             )
         }
 
@@ -287,11 +288,13 @@ struct LocalImageAnalyzer {
 
         // AI images often have unnaturally uniform sharpness (low CV)
         // Real photos with depth-of-field have higher CV
-        if cv < 0.15 && mean > 5.0 {
+        // Note: modern phone cameras with computational photography naturally produce
+        // uniform sharpness, so this threshold must be conservative
+        if cv < 0.08 && mean > 5.0 {
             return ImageSuspicionFlag(
                 type: .backgroundConsistency,
                 finding: "Unnaturally uniform sharpness across the image — real photos typically show depth-of-field variation",
-                suspicionLevel: max(0.3, 0.6 - cv * 2.0)
+                suspicionLevel: max(0.2, 0.45 - cv * 3.0)
             )
         }
 
@@ -389,22 +392,24 @@ struct LocalImageAnalyzer {
         guard fullEdge > 0 else { return nil }
 
         // AI images often have very low edge density (smooth textures)
-        if fullEdge < 0.05 {
+        // Only flag at very low thresholds to avoid false positives on soft-lit portraits
+        if fullEdge < 0.03 {
             return ImageSuspicionFlag(
                 type: .textureUniformity,
                 finding: "Very low texture detail detected — AI-generated images often show unnaturally smooth surfaces",
-                suspicionLevel: max(0.3, (0.08 - fullEdge) * 8.0)
+                suspicionLevel: max(0.25, (0.05 - fullEdge) * 6.0)
             )
         }
 
-        // Also check if center and full have very similar edge density
-        // (AI images often lack the natural texture variation between subject and background)
+        // Check if center and full have very similar edge density — only flag when
+        // the similarity is extreme (the previous 0.85-1.15 range was too broad and
+        // caught many well-lit real photos)
         let ratio = centerEdge / fullEdge
-        if ratio > 0.85 && ratio < 1.15 && fullEdge > 0.02 {
+        if ratio > 0.93 && ratio < 1.07 && fullEdge > 0.02 && fullEdge < 0.08 {
             return ImageSuspicionFlag(
                 type: .textureUniformity,
                 finding: "Texture complexity is unusually consistent between subject and background",
-                suspicionLevel: 0.3
+                suspicionLevel: 0.2
             )
         }
 
@@ -453,11 +458,13 @@ struct LocalImageAnalyzer {
 
         // Natural photos with bokeh/depth typically have CV > 0.3
         // AI images with uniform sharpness have CV < 0.1
-        if cv < 0.08 && mean > 3.0 {
+        // Note: phone cameras with small sensors produce deep DOF naturally,
+        // so only flag at very low CV values
+        if cv < 0.04 && mean > 3.0 {
             return ImageSuspicionFlag(
                 type: .sharpnessPattern,
                 finding: "Sharpness is unnaturally consistent across the entire image — natural photos show focal depth variation",
-                suspicionLevel: max(0.3, 0.5 - cv * 4.0)
+                suspicionLevel: max(0.2, 0.4 - cv * 5.0)
             )
         }
 
@@ -479,17 +486,20 @@ struct LocalImageAnalyzer {
         var score = weightedSum / totalWeight
 
         // Co-occurrence bonus: multiple independent signals are more suspicious
-        if flags.count >= 3 {
-            score = min(1.0, score * 1.3)
-        } else if flags.count >= 2 {
-            score = min(1.0, score * 1.15)
-        }
-
-        // Strong bonus if both EXIF missing AND face symmetry flagged
-        let hasExif = flags.contains { $0.type == .exifMetadata }
-        let hasFace = flags.contains { $0.type == .faceSymmetry }
-        if hasExif && hasFace {
+        // but keep bonuses modest to avoid inflating weak signals
+        if flags.count >= 4 {
             score = min(1.0, score * 1.2)
+        } else if flags.count >= 3 {
+            score = min(1.0, score * 1.1)
+        }
+        // No bonus for just 2 flags — two weak signals shouldn't compound into a scare
+
+        // Bonus only if face symmetry is flagged alongside a non-EXIF signal
+        // (EXIF missing is too common to use as a corroborating signal)
+        let hasFace = flags.contains { $0.type == .faceSymmetry }
+        let hasNonExifNonFace = flags.contains { $0.type != .exifMetadata && $0.type != .faceSymmetry }
+        if hasFace && hasNonExifNonFace {
+            score = min(1.0, score * 1.15)
         }
 
         return min(1.0, max(0.0, score))
@@ -497,10 +507,10 @@ struct LocalImageAnalyzer {
 
     private func riskLevelFromScore(_ score: Double) -> RiskLevel {
         switch score {
-        case ..<0.20: return .low
-        case 0.20..<0.45: return .medium
-        case 0.45..<0.65: return .high
-        default: return .critical
+        case ..<0.25: return .low
+        case 0.25..<0.50: return .medium
+        case 0.50..<0.75: return .high
+        default: return .critical     // Only flag critical when evidence is strong
         }
     }
 
