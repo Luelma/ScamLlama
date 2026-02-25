@@ -39,7 +39,7 @@ enum ImageCheckType: String, CaseIterable {
 
     var weight: Double {
         switch self {
-        case .faceSymmetry: return 2.5           // Strongest signal
+        case .faceSymmetry: return 1.5           // Reduced — selfies are naturally symmetric
         case .backgroundConsistency: return 1.0  // Weak — phone cameras have deep DOF naturally
         case .colorDistribution: return 1.0
         case .textureUniformity: return 1.2
@@ -161,12 +161,13 @@ struct LocalImageAnalyzer {
         let combinedSymmetry = (symmetryRatio + sizeRatio) / 2.0
 
         // Natural faces typically have 0.85-0.95 symmetry
-        // AI faces often have >0.98 (raised threshold — some real faces are naturally symmetric)
-        if combinedSymmetry > 0.97 {
+        // AI faces often have >0.99 — only flag near-perfect symmetry
+        // Real selfies (front-facing, arm's length) routinely hit 0.97-0.98
+        if combinedSymmetry > 0.985 {
             return ImageSuspicionFlag(
                 type: .faceSymmetry,
                 finding: "Face shows unusually high bilateral symmetry (\(Int(combinedSymmetry * 100))%) — common in AI-generated faces",
-                suspicionLevel: min((combinedSymmetry - 0.97) * 12.0 + 0.4, 0.8)
+                suspicionLevel: min((combinedSymmetry - 0.985) * 20.0 + 0.3, 0.7)
             )
         }
 
@@ -407,21 +408,9 @@ struct LocalImageAnalyzer {
 
         var score = weightedSum / totalWeight
 
-        // Co-occurrence bonus: multiple independent signals are more suspicious
-        // but keep bonuses modest to avoid inflating weak signals
-        if flags.count >= 4 {
-            score = min(1.0, score * 1.2)
-        } else if flags.count >= 3 {
-            score = min(1.0, score * 1.1)
-        }
-        // No bonus for just 2 flags — two weak signals shouldn't compound into a scare
-
-        // Bonus if face symmetry is flagged alongside another signal
-        let hasFace = flags.contains { $0.type == .faceSymmetry }
-        let hasOther = flags.contains { $0.type != .faceSymmetry }
-        if hasFace && hasOther {
-            score = min(1.0, score * 1.15)
-        }
+        // No co-occurrence or face+other bonuses — let the weighted average
+        // speak for itself. Compound multipliers inflated weak signals into
+        // false positives on normal selfies.
 
         return min(1.0, max(0.0, score))
     }
