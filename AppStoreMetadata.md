@@ -75,8 +75,11 @@ https://YOUR-GITHUB-USERNAME.github.io/lovellama-privacy/
 
 ## What's New in This Version
 
+**v1.3**
+Further improved photo verification accuracy — removed metadata-based detection that caused false positives on photos shared via social media and messaging apps. Detection now relies entirely on visual analysis of image content.
+
 **v1.2**
-Improved photo verification accuracy — reduced false positives in AI image detection so real photos shared via social media and messaging apps are no longer incorrectly flagged. Rebalanced detection thresholds and scoring to require stronger evidence before labeling a photo as AI-generated.
+Improved photo verification accuracy — reduced false positives in AI image detection. Rebalanced detection thresholds and scoring to require stronger evidence before labeling a photo as AI-generated.
 
 **v1.0**
 Love Llama 1.0 — your AI-powered romance scam detector is here! Analyze chats, verify photos, and spot red flags to stay safe while dating.

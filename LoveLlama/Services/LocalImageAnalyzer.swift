@@ -2,7 +2,6 @@ import Foundation
 import UIKit
 import Vision
 import CoreImage
-import ImageIO
 
 // MARK: - Result Types
 
@@ -22,7 +21,6 @@ struct ImageSuspicionFlag: Identifiable {
 }
 
 enum ImageCheckType: String, CaseIterable {
-    case exifMetadata
     case faceSymmetry
     case backgroundConsistency
     case colorDistribution
@@ -31,7 +29,6 @@ enum ImageCheckType: String, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .exifMetadata: return "Image Metadata"
         case .faceSymmetry: return "Face Symmetry"
         case .backgroundConsistency: return "Background Consistency"
         case .colorDistribution: return "Color Distribution"
@@ -42,8 +39,7 @@ enum ImageCheckType: String, CaseIterable {
 
     var weight: Double {
         switch self {
-        case .exifMetadata: return 0.8           // Weak signal — most shared photos lack EXIF
-        case .faceSymmetry: return 2.5           // Moderate signal
+        case .faceSymmetry: return 2.5           // Strongest signal
         case .backgroundConsistency: return 1.0  // Weak — phone cameras have deep DOF naturally
         case .colorDistribution: return 1.0
         case .textureUniformity: return 1.2
@@ -62,14 +58,13 @@ struct LocalImageAnalyzer {
         let scaled = downscale(image)
 
         // Run all checks concurrently
-        async let exifFlag = checkEXIFMetadata(image)
         async let faceFlag = checkFaceSymmetry(scaled)
         async let bgFlag = checkBackgroundConsistency(scaled)
         async let colorFlag = checkColorDistribution(scaled)
         async let textureFlag = checkTextureUniformity(scaled)
         async let sharpnessFlag = checkSharpnessPatterns(scaled)
 
-        let results = await [exifFlag, faceFlag, bgFlag, colorFlag, textureFlag, sharpnessFlag]
+        let results = await [faceFlag, bgFlag, colorFlag, textureFlag, sharpnessFlag]
         let flags = results.compactMap { $0 }
 
         let score = calculateWeightedScore(flags)
@@ -101,80 +96,7 @@ struct LocalImageAnalyzer {
         }
     }
 
-    // MARK: - Check 1: EXIF Metadata
 
-    private func checkEXIFMetadata(_ image: UIImage) -> ImageSuspicionFlag? {
-        guard let data = image.jpegData(compressionQuality: 1.0),
-              let source = CGImageSourceCreateWithData(data as CFData, nil) else {
-            // No data at all — suspicious
-            return ImageSuspicionFlag(
-                type: .exifMetadata,
-                finding: "Unable to read image data for metadata inspection",
-                suspicionLevel: 0.4
-            )
-        }
-
-        let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] ?? [:]
-
-        var missingFields = 0
-        var totalFields = 0
-
-        // Check EXIF dictionary
-        let exif = properties[kCGImagePropertyExifDictionary] as? [CFString: Any]
-        let exifChecks: [CFString] = [
-            kCGImagePropertyExifDateTimeOriginal,
-            kCGImagePropertyExifLensMake,
-            kCGImagePropertyExifFocalLength,
-            kCGImagePropertyExifExposureTime,
-            kCGImagePropertyExifISOSpeedRatings
-        ]
-        for key in exifChecks {
-            totalFields += 1
-            if exif?[key] == nil { missingFields += 1 }
-        }
-
-        // Check TIFF dictionary (camera make/model)
-        let tiff = properties[kCGImagePropertyTIFFDictionary] as? [CFString: Any]
-        let tiffChecks: [CFString] = [
-            kCGImagePropertyTIFFMake,
-            kCGImagePropertyTIFFModel
-        ]
-        for key in tiffChecks {
-            totalFields += 1
-            if tiff?[key] == nil { missingFields += 1 }
-        }
-
-        // Check GPS
-        totalFields += 1
-        if properties[kCGImagePropertyGPSDictionary] == nil {
-            missingFields += 1
-        }
-
-        guard totalFields > 0 else { return nil }
-
-        let missingRatio = Double(missingFields) / Double(totalFields)
-
-        // If EXIF is completely absent — common for photos shared via social media,
-        // messaging apps, screenshots, and web downloads. Weak signal on its own.
-        if exif == nil && tiff == nil {
-            return ImageSuspicionFlag(
-                type: .exifMetadata,
-                finding: "No camera metadata found — note: photos shared via social media or messaging apps often lose metadata",
-                suspicionLevel: 0.4
-            )
-        }
-
-        // Partially missing — even weaker signal
-        if missingRatio > 0.7 {
-            return ImageSuspicionFlag(
-                type: .exifMetadata,
-                finding: "Most camera metadata fields are missing (\(missingFields)/\(totalFields))",
-                suspicionLevel: min(missingRatio * 0.4, 0.4)
-            )
-        }
-
-        return nil
-    }
 
     // MARK: - Check 2: Face Symmetry
 
@@ -494,11 +416,10 @@ struct LocalImageAnalyzer {
         }
         // No bonus for just 2 flags — two weak signals shouldn't compound into a scare
 
-        // Bonus only if face symmetry is flagged alongside a non-EXIF signal
-        // (EXIF missing is too common to use as a corroborating signal)
+        // Bonus if face symmetry is flagged alongside another signal
         let hasFace = flags.contains { $0.type == .faceSymmetry }
-        let hasNonExifNonFace = flags.contains { $0.type != .exifMetadata && $0.type != .faceSymmetry }
-        if hasFace && hasNonExifNonFace {
+        let hasOther = flags.contains { $0.type != .faceSymmetry }
+        if hasFace && hasOther {
             score = min(1.0, score * 1.15)
         }
 
