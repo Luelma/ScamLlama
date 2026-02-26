@@ -162,12 +162,12 @@ struct LocalImageAnalyzer {
 
         // Natural faces typically have 0.85-0.95 symmetry
         // AI faces often have >0.99 — only flag near-perfect symmetry
-        // Real selfies (front-facing, arm's length) routinely hit 0.97-0.98
-        if combinedSymmetry > 0.985 {
+        // Real selfies (front-facing, arm's length) routinely hit 0.97-0.99
+        if combinedSymmetry > 0.993 {
             return ImageSuspicionFlag(
                 type: .faceSymmetry,
                 finding: "Face shows unusually high bilateral symmetry (\(Int(combinedSymmetry * 100))%) — common in AI-generated faces",
-                suspicionLevel: min((combinedSymmetry - 0.985) * 20.0 + 0.3, 0.7)
+                suspicionLevel: min((combinedSymmetry - 0.993) * 30.0 + 0.3, 0.7)
             )
         }
 
@@ -212,12 +212,13 @@ struct LocalImageAnalyzer {
         // AI images often have unnaturally uniform sharpness (low CV)
         // Real photos with depth-of-field have higher CV
         // Note: modern phone cameras with computational photography naturally produce
-        // uniform sharpness, so this threshold must be conservative
-        if cv < 0.08 && mean > 5.0 {
+        // uniform sharpness, and indoor photos (gyms, offices) have subjects at similar
+        // distances — threshold must be very conservative
+        if cv < 0.04 && mean > 5.0 {
             return ImageSuspicionFlag(
                 type: .backgroundConsistency,
                 finding: "Unnaturally uniform sharpness across the image — real photos typically show depth-of-field variation",
-                suspicionLevel: max(0.2, 0.45 - cv * 3.0)
+                suspicionLevel: min(0.3, max(0.15, 0.35 - cv * 5.0))
             )
         }
 
@@ -271,12 +272,13 @@ struct LocalImageAnalyzer {
         }
 
         // Very low entropy suggests overly uniform color distribution
-        // Typical photos: entropy 4.5-5.8, AI images often: 3.5-4.5
-        if entropy < 3.8 {
+        // Typical photos: entropy 4.5-5.8, AI images often: 3.0-4.0
+        // Indoor photos with limited color palette (gyms, offices) can dip below 4.0
+        if entropy < 3.4 {
             return ImageSuspicionFlag(
                 type: .colorDistribution,
                 finding: "Color distribution is unusually uniform — AI-generated images often show smoother color gradients",
-                suspicionLevel: max(0.3, (4.0 - entropy) * 0.5)
+                suspicionLevel: min(0.35, max(0.2, (3.6 - entropy) * 0.5))
             )
         }
 
@@ -325,14 +327,14 @@ struct LocalImageAnalyzer {
         }
 
         // Check if center and full have very similar edge density — only flag when
-        // the similarity is extreme (the previous 0.85-1.15 range was too broad and
-        // caught many well-lit real photos)
+        // the similarity is extreme. Indoor photos with uniform lighting routinely
+        // have similar edge density everywhere, so keep this very tight.
         let ratio = centerEdge / fullEdge
-        if ratio > 0.93 && ratio < 1.07 && fullEdge > 0.02 && fullEdge < 0.08 {
+        if ratio > 0.97 && ratio < 1.03 && fullEdge > 0.02 && fullEdge < 0.06 {
             return ImageSuspicionFlag(
                 type: .textureUniformity,
                 finding: "Texture complexity is unusually consistent between subject and background",
-                suspicionLevel: 0.2
+                suspicionLevel: 0.15
             )
         }
 
@@ -382,12 +384,13 @@ struct LocalImageAnalyzer {
         // Natural photos with bokeh/depth typically have CV > 0.3
         // AI images with uniform sharpness have CV < 0.1
         // Note: phone cameras with small sensors produce deep DOF naturally,
-        // so only flag at very low CV values
-        if cv < 0.04 && mean > 3.0 {
+        // and indoor scenes at similar distance produce uniform sharpness —
+        // only flag at extremely low CV values
+        if cv < 0.02 && mean > 3.0 {
             return ImageSuspicionFlag(
                 type: .sharpnessPattern,
                 finding: "Sharpness is unnaturally consistent across the entire image — natural photos show focal depth variation",
-                suspicionLevel: max(0.2, 0.4 - cv * 5.0)
+                suspicionLevel: min(0.3, max(0.15, 0.3 - cv * 8.0))
             )
         }
 
