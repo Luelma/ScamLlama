@@ -9,7 +9,7 @@ struct ClaudeAPIClient {
     private let apiURL = URL(string: Constants.anthropicAPIURL)!
     private let model = Constants.defaultModel
 
-    func analyze(text: String, apiKey: String) async throws -> AnalysisResult {
+    func analyze(text: String, apiKey: String, context: ConversationContext? = nil) async throws -> AnalysisResult {
         var request = URLRequest(url: apiURL, timeoutInterval: 30)
         request.httpMethod = "POST"
         request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
@@ -33,7 +33,8 @@ struct ClaudeAPIClient {
           ],
           "summary": "<2-3 sentence assessment>",
           "recommendation": "<actionable advice>",
-          "conversationStage": "<early|building_trust|escalating|requesting>"
+          "conversationStage": "<early|building_trust|escalating|requesting>",
+          "nextMovePrediction": "<what the scammer is likely to do next based on current stage>"
         }
 
         Score guidelines:
@@ -45,12 +46,35 @@ struct ClaudeAPIClient {
         Be thorough but avoid false positives. Consider cultural context.
         """
 
+        var userMessage = "Analyze this conversation for romance scam indicators:\n\n\(text)"
+
+        if let context = context, context.hasAnyData {
+            var contextLines: [String] = ["\n\nAdditional context provided by the user:"]
+            if let duration = context.talkingDuration {
+                contextLines.append("- Talking duration: \(duration.rawValue)")
+            }
+            if let videoCalled = context.hasVideoCalledPerson {
+                contextLines.append("- Video called: \(videoCalled ? "Yes" : "No")")
+            }
+            if let metInPerson = context.hasMetInPerson {
+                contextLines.append("- Met in person: \(metInPerson ? "Yes" : "No")")
+            }
+            if let askedForMoney = context.hasBeenAskedForMoney {
+                contextLines.append("- Asked for money: \(askedForMoney ? "Yes" : "No")")
+            }
+            if let investments = context.hasDiscussedInvestments {
+                contextLines.append("- Discussed investments: \(investments ? "Yes" : "No")")
+            }
+            contextLines.append("\nFactor this context into your risk assessment. A person who has been talking for months without video calling is a significant red flag. Money requests from someone never met in person should be weighted as critical risk.")
+            userMessage += contextLines.joined(separator: "\n")
+        }
+
         let body: [String: Any] = [
             "model": model,
             "max_tokens": 2048,
             "system": systemPrompt,
             "messages": [
-                ["role": "user", "content": "Analyze this conversation for romance scam indicators:\n\n\(text)"]
+                ["role": "user", "content": userMessage]
             ]
         ]
 

@@ -59,6 +59,16 @@ struct ConversationDetailView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
 
+                    // Situation assessment (if context was saved)
+                    if let context = conversation.conversationContext, context.hasAnyData {
+                        SituationAssessmentCardView(context: context)
+                    }
+
+                    // Next move prediction
+                    if let prediction = result.nextMovePrediction {
+                        NextMovePredictionCardView(prediction: prediction)
+                    }
+
                     // Patterns
                     if !result.detectedPatterns.isEmpty {
                         VStack(alignment: .leading, spacing: 16) {

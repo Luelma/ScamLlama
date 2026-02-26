@@ -3,6 +3,7 @@ import SwiftUI
 struct ChatResultView: View {
     let result: AnalysisResult
     var contactName: String = ""
+    var context: ConversationContext?
     var onSave: (() -> Void)?
     @State private var saved = false
 
@@ -51,6 +52,16 @@ struct ChatResultView: View {
                         .padding(.horizontal)
                 }
                 .padding(.top, 16)
+
+                // Situation assessment card
+                if let context = context, context.hasAnyData {
+                    SituationAssessmentCardView(context: context)
+                }
+
+                // What a Scammer Would Do Next
+                if let prediction = result.nextMovePrediction {
+                    NextMovePredictionCardView(prediction: prediction)
+                }
 
                 // Detected patterns
                 if !result.detectedPatterns.isEmpty {
@@ -105,5 +116,117 @@ struct ChatResultView: View {
         }
         .navigationTitle("Analysis Results")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+}
+
+// MARK: - Shared Card Views
+
+enum SituationRisk {
+    case low, medium, high
+    var icon: String {
+        switch self {
+        case .low: return "checkmark.circle.fill"
+        case .medium: return "exclamationmark.triangle.fill"
+        case .high: return "xmark.circle.fill"
+        }
+    }
+    var color: Color {
+        switch self {
+        case .low: return .green
+        case .medium: return .yellow
+        case .high: return .red
+        }
+    }
+}
+
+struct SituationAssessmentCardView: View {
+    let context: ConversationContext
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Situation Assessment", systemImage: "person.text.rectangle")
+                .font(.headline)
+                .foregroundStyle(.purple)
+
+            VStack(spacing: 8) {
+                if let duration = context.talkingDuration {
+                    situationRow(
+                        label: "Talking Duration",
+                        value: duration.rawValue,
+                        risk: duration == .threeMonthsPlus ? .high : (duration == .oneToThreeMonths ? .medium : .low)
+                    )
+                }
+                if let videoCalled = context.hasVideoCalledPerson {
+                    situationRow(
+                        label: "Video Called",
+                        value: videoCalled ? "Yes" : "No",
+                        risk: videoCalled ? .low : .high
+                    )
+                }
+                if let metInPerson = context.hasMetInPerson {
+                    situationRow(
+                        label: "Met In Person",
+                        value: metInPerson ? "Yes" : "No",
+                        risk: metInPerson ? .low : .high
+                    )
+                }
+                if let money = context.hasBeenAskedForMoney {
+                    situationRow(
+                        label: "Money Requested",
+                        value: money ? "Yes" : "No",
+                        risk: money ? .high : .low
+                    )
+                }
+                if let investments = context.hasDiscussedInvestments {
+                    situationRow(
+                        label: "Investments Discussed",
+                        value: investments ? "Yes" : "No",
+                        risk: investments ? .high : .low
+                    )
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color.purple.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(.horizontal)
+    }
+
+    private func situationRow(label: String, value: String, risk: SituationRisk) -> some View {
+        HStack {
+            Text(label)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Spacer()
+            Text(value)
+                .font(.subheadline)
+                .fontWeight(.medium)
+            Image(systemName: risk.icon)
+                .foregroundStyle(risk.color)
+                .font(.subheadline)
+        }
+    }
+}
+
+struct NextMovePredictionCardView: View {
+    let prediction: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("What a Scammer Would Do Next", systemImage: "arrow.trianglehead.clockwise")
+                .font(.headline)
+                .foregroundStyle(.orange)
+
+            Text(prediction)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color.orange.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(.horizontal)
     }
 }

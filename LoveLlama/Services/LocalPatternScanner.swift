@@ -9,6 +9,7 @@ struct LocalScanResult {
     var conversationStage: String?
     var summary: String
     var recommendation: String
+    var nextMovePrediction: String?
 
     struct FlaggedPattern: Identifiable {
         let id = UUID()
@@ -467,7 +468,7 @@ struct LocalPatternScanner {
 
     // MARK: - Main Scan
 
-    func scan(_ text: String) -> LocalScanResult {
+    func scan(_ text: String, context: ConversationContext? = nil) -> LocalScanResult {
         // Truncate excessively long input to prevent ReDoS
         let safeText = String(text.prefix(50_000))
         let lowered = safeText.lowercased()
@@ -499,12 +500,24 @@ struct LocalPatternScanner {
             }
         }
 
+        // Generate synthetic flags from context
+        if let context = context {
+            flagged = applySyntheticFlags(flagged: flagged, context: context)
+        }
+
         // Weighted score calculation
-        let weightedScore = calculateWeightedScore(flagged)
+        var weightedScore = calculateWeightedScore(flagged)
+
+        // Apply context-based scoring boosts
+        if let context = context {
+            weightedScore = applyContextBoosts(score: weightedScore, flagged: flagged, context: context)
+        }
+
         let riskLevel = riskLevelFromScore(weightedScore)
         let stage = detectStage(lowered)
         let summary = buildSummary(flagged: flagged, riskLevel: riskLevel, stage: stage)
         let recommendation = buildRecommendation(flagged: flagged, riskLevel: riskLevel, stage: stage)
+        let prediction = buildNextMovePrediction(stage: stage)
 
         return LocalScanResult(
             flaggedPatterns: flagged,
@@ -512,8 +525,91 @@ struct LocalPatternScanner {
             weightedScore: weightedScore,
             conversationStage: stage,
             summary: summary,
-            recommendation: recommendation
+            recommendation: recommendation,
+            nextMovePrediction: prediction
         )
+    }
+
+    // MARK: - Context Scoring Boosts
+
+    private func applySyntheticFlags(flagged: [LocalScanResult.FlaggedPattern], context: ConversationContext) -> [LocalScanResult.FlaggedPattern] {
+        var result = flagged
+        let existingTypes = Set(flagged.map { $0.patternType })
+
+        // No video call + 1+ months → synthetic refusingVideoCall
+        if context.hasVideoCalledPerson == false,
+           let duration = context.talkingDuration,
+           (duration == .oneToThreeMonths || duration == .threeMonthsPlus),
+           !existingTypes.contains(.refusingVideoCall) {
+            result.append(.init(
+                patternType: .refusingVideoCall,
+                matchedPhrases: ["User reported: no video call after \(duration.rawValue)"],
+                matchCount: 1,
+                confidence: 0.70,
+                explanation: "You've been talking for \(duration.rawValue) without a video call. This is a significant red flag — someone who is genuinely interested will make time for a video call."
+            ))
+        }
+
+        // Asked for money = true → synthetic financialRequest
+        if context.hasBeenAskedForMoney == true,
+           !existingTypes.contains(.financialRequest) {
+            result.append(.init(
+                patternType: .financialRequest,
+                matchedPhrases: ["User reported: has been asked for money"],
+                matchCount: 1,
+                confidence: 0.80,
+                explanation: "You reported that this person has asked you for money. This is one of the strongest indicators of a romance scam, especially if you have never met in person."
+            ))
+        }
+
+        // Discussed investments = true → synthetic pigButchering
+        if context.hasDiscussedInvestments == true,
+           !existingTypes.contains(.pigButchering) {
+            result.append(.init(
+                patternType: .pigButchering,
+                matchedPhrases: ["User reported: investment discussions"],
+                matchCount: 1,
+                confidence: 0.75,
+                explanation: "You reported that this person has discussed investments with you. Romance scammers frequently introduce fake investment platforms (pig butchering scam) after building trust."
+            ))
+        }
+
+        return result
+    }
+
+    private func applyContextBoosts(score: Double, flagged: [LocalScanResult.FlaggedPattern], context: ConversationContext) -> Double {
+        var boosted = score
+
+        // No video call + 1+ months talking: +0.15
+        if context.hasVideoCalledPerson == false,
+           let duration = context.talkingDuration,
+           (duration == .oneToThreeMonths || duration == .threeMonthsPlus) {
+            boosted += 0.15
+        }
+
+        // No in-person meeting + 3+ months: +0.10
+        if context.hasMetInPerson == false,
+           context.talkingDuration == .threeMonthsPlus {
+            boosted += 0.10
+        }
+
+        // Asked for money: +0.20
+        if context.hasBeenAskedForMoney == true {
+            boosted += 0.20
+        }
+
+        // Discussed investments: +0.15
+        if context.hasDiscussedInvestments == true {
+            boosted += 0.15
+        }
+
+        // Love bombing detected + < 1 week talking: +0.10
+        let hasLoveBombing = flagged.contains { $0.patternType == .loveBombing }
+        if hasLoveBombing, context.talkingDuration == .lessThanWeek {
+            boosted += 0.10
+        }
+
+        return min(1.0, boosted)
     }
 
     // MARK: - Scoring
@@ -620,6 +716,24 @@ struct LocalPatternScanner {
             return "Multiple serious red flags detected: \(patternList). This conversation closely matches known romance scam patterns.\(stageNote)"
         case .critical:
             return "Critical warning: \(patternList). This conversation exhibits the classic hallmarks of a romance scam.\(stageNote)"
+        }
+    }
+
+    private func buildNextMovePrediction(stage: String?) -> String? {
+        guard let stage = stage else { return nil }
+        switch stage {
+        case "initial_contact":
+            return "Expect escalating affection, compliments, and talk of destiny. They may push to move off the dating platform soon."
+        case "emotional_bonding":
+            return "Expect requests for exclusivity, talk of marriage or meeting family, and possibly a tragic backstory to generate sympathy."
+        case "exclusivity_isolation":
+            return "A crisis or financial request is likely coming soon. They may introduce an 'investment opportunity' or fabricate an emergency."
+        case "crisis_money_request":
+            return "If you send money, expect the requests to escalate. There will always be another emergency, another fee, another obstacle."
+        case "guilt_pressure":
+            return "This is the pressure phase. They will threaten to end the relationship or make you feel guilty for not helping. This is manipulation."
+        default:
+            return nil
         }
     }
 

@@ -29,11 +29,11 @@ class ScamAnalysisEngine {
     private let scanner = LocalPatternScanner()
     private let apiClient = ClaudeAPIClient()
 
-    func analyze(text: String) async {
+    func analyze(text: String, context: ConversationContext? = nil) async {
         state = .scanning
 
         // Step 1: Instant local scan (now produces full analysis)
-        let localResult = scanner.scan(text)
+        let localResult = scanner.scan(text, context: context)
         localScanResult = localResult
 
         // Step 2: Try API for deeper analysis (optional)
@@ -55,7 +55,7 @@ class ScamAnalysisEngine {
         }
 
         do {
-            let apiResult = try await apiClient.analyze(text: text, apiKey: apiKey)
+            let apiResult = try await apiClient.analyze(text: text, apiKey: apiKey, context: context)
             state = .complete(apiResult)
         } catch {
             // Fall back to local result on API failure
@@ -89,7 +89,8 @@ class ScamAnalysisEngine {
             detectedPatterns: sortedPatterns,
             summary: localResult.summary,
             recommendation: localResult.recommendation,
-            conversationStage: localResult.conversationStage
+            conversationStage: localResult.conversationStage,
+            nextMovePrediction: localResult.nextMovePrediction
         )
     }
 

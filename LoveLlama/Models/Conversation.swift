@@ -10,6 +10,7 @@ class Conversation {
     var source: AnalysisSource = AnalysisSource.paste
     var createdAt: Date = Date()
     var analysisResultData: Data?
+    var contextData: Data?
 
     var analysisResult: AnalysisResult? {
         get {
@@ -18,6 +19,16 @@ class Conversation {
         }
         set {
             analysisResultData = try? JSONEncoder().encode(newValue)
+        }
+    }
+
+    var conversationContext: ConversationContext? {
+        get {
+            guard let data = contextData else { return nil }
+            return try? JSONDecoder().decode(ConversationContext.self, from: data)
+        }
+        set {
+            contextData = try? JSONEncoder().encode(newValue)
         }
     }
 

@@ -7,6 +7,7 @@ struct AnalysisResult: Codable {
     var summary: String
     var recommendation: String
     var conversationStage: String?
+    var nextMovePrediction: String?
 }
 
 struct DetectedPattern: Codable, Identifiable {

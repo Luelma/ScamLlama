@@ -17,6 +17,26 @@ class ChatAnalysisViewModel {
     var engine = ScamAnalysisEngine()
     var showingResult = false
 
+    // Situation context fields
+    var contextSectionExpanded: Bool = false
+    var talkingDuration: TalkingDuration?
+    var hasVideoCalledPerson: Bool = false
+    var hasMetInPerson: Bool = false
+    var hasBeenAskedForMoney: Bool = false
+    var hasDiscussedInvestments: Bool = false
+
+    var conversationContext: ConversationContext? {
+        // Only return context if user actually opened the context section
+        guard contextSectionExpanded else { return nil }
+        return ConversationContext(
+            talkingDuration: talkingDuration,
+            hasVideoCalledPerson: hasVideoCalledPerson,
+            hasMetInPerson: hasMetInPerson,
+            hasBeenAskedForMoney: hasBeenAskedForMoney,
+            hasDiscussedInvestments: hasDiscussedInvestments
+        )
+    }
+
     // OCR state
     var selectedImage: UIImage?
     var isExtractingText = false
@@ -77,7 +97,7 @@ class ChatAnalysisViewModel {
     }
 
     func analyze() async {
-        await engine.analyze(text: inputText)
+        await engine.analyze(text: inputText, context: conversationContext)
         if analysisResult != nil {
             showingResult = true
         }
@@ -92,6 +112,7 @@ class ChatAnalysisViewModel {
             platform: platform.isEmpty ? nil : platform
         )
         conversation.analysisResult = result
+        conversation.conversationContext = conversationContext
         modelContext.insert(conversation)
     }
 
@@ -99,6 +120,12 @@ class ChatAnalysisViewModel {
         inputText = ""
         contactName = ""
         platform = ""
+        contextSectionExpanded = false
+        talkingDuration = nil
+        hasVideoCalledPerson = false
+        hasMetInPerson = false
+        hasBeenAskedForMoney = false
+        hasDiscussedInvestments = false
         selectedImage = nil
         ocrError = nil
         engine.reset()

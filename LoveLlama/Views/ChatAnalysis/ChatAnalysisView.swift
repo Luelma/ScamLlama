@@ -7,6 +7,7 @@ struct ChatAnalysisView: View {
     @State private var viewModel = ChatAnalysisViewModel()
     @State private var selectedItem: PhotosPickerItem?
     @State private var showAPIConsentAlert = false
+    @State private var showContextSection = false
 
     var body: some View {
         NavigationStack {
@@ -20,6 +21,9 @@ struct ChatAnalysisView: View {
                             .textFieldStyle(.roundedBorder)
                     }
                     .padding(.horizontal)
+
+                    // Situation context (collapsible)
+                    situationContextSection
 
                     // Input mode picker
                     Picker("Input Mode", selection: $viewModel.inputMode) {
@@ -111,6 +115,7 @@ struct ChatAnalysisView: View {
                     ChatResultView(
                         result: result,
                         contactName: viewModel.contactName,
+                        context: viewModel.conversationContext,
                         onSave: {
                             viewModel.saveConversation(modelContext: modelContext)
                         }
@@ -137,6 +142,69 @@ struct ChatAnalysisView: View {
                 Button("Cancel", role: .cancel) { }
             } message: {
                 Text("To provide AI-enhanced analysis, the conversation text you entered will be sent to Anthropic's Claude API (api.anthropic.com) for scam pattern detection.\n\nData sent: The conversation text only. No personal identifiers, contact names, or device info are included.\n\nRecipient: Anthropic, PBC — processed under their usage policy.\n\nYou can also analyze locally on-device without sharing any data.")
+            }
+        }
+    }
+
+    // MARK: - Situation Context
+
+    private var situationContextSection: some View {
+        VStack(spacing: 0) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    showContextSection.toggle()
+                    viewModel.contextSectionExpanded = showContextSection
+                }
+            } label: {
+                HStack {
+                    Label("Situation Context", systemImage: "person.fill.questionmark")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                    Spacer()
+                    Text("Optional")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                    Image(systemName: showContextSection ? "chevron.up" : "chevron.down")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal)
+
+            if showContextSection {
+                VStack(spacing: 16) {
+                    // Talking duration
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("How long have you been talking?")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Picker("Duration", selection: $viewModel.talkingDuration) {
+                            Text("Not set").tag(TalkingDuration?.none)
+                            ForEach(TalkingDuration.allCases, id: \.self) { duration in
+                                Text(duration.rawValue).tag(TalkingDuration?.some(duration))
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
+
+                    // Toggles
+                    Toggle("Have you video called?", isOn: $viewModel.hasVideoCalledPerson)
+                        .font(.subheadline)
+                    Toggle("Have you met in person?", isOn: $viewModel.hasMetInPerson)
+                        .font(.subheadline)
+                    Toggle("Have they asked for money?", isOn: $viewModel.hasBeenAskedForMoney)
+                        .font(.subheadline)
+                    Toggle("Have they discussed investments?", isOn: $viewModel.hasDiscussedInvestments)
+                        .font(.subheadline)
+                }
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.horizontal)
+                .padding(.top, 8)
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
     }
