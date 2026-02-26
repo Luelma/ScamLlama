@@ -32,6 +32,7 @@
 		A10000023 /* ClaudeAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000023 /* ClaudeAPIClient.swift */; };
 		A10000024 /* LocalPatternScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000024 /* LocalPatternScanner.swift */; };
 		A10000042 /* LocalImageAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000042 /* LocalImageAnalyzer.swift */; };
+		A2A6FA646622F3ABFF4AD9E3 /* ForceUpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24309511346AB3471501D3D /* ForceUpdateChecker.swift */; };
 		A10000025 /* ScamAnalysisEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000025 /* ScamAnalysisEngine.swift */; };
 		A10000026 /* ChatAnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000026 /* ChatAnalysisViewModel.swift */; };
 		A10000027 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000027 /* SettingsViewModel.swift */; };
@@ -77,6 +78,7 @@
 		A20000023 /* ClaudeAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPIClient.swift; sourceTree = "<group>"; };
 		A20000024 /* LocalPatternScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPatternScanner.swift; sourceTree = "<group>"; };
 		A20000042 /* LocalImageAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalImageAnalyzer.swift; sourceTree = "<group>"; };
+		A24309511346AB3471501D3D /* ForceUpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForceUpdateChecker.swift; sourceTree = "<group>"; };
 		A20000025 /* ScamAnalysisEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScamAnalysisEngine.swift; sourceTree = "<group>"; };
 		A20000026 /* ChatAnalysisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAnalysisViewModel.swift; sourceTree = "<group>"; };
 		A20000027 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
@@ -160,6 +162,7 @@
 				A20000023 /* ClaudeAPIClient.swift */,
 				A20000024 /* LocalPatternScanner.swift */,
 				A20000042 /* LocalImageAnalyzer.swift */,
+				A24309511346AB3471501D3D /* ForceUpdateChecker.swift */,
 				A20000025 /* ScamAnalysisEngine.swift */,
 				A20000031 /* OCRService.swift */,
 				A20000032 /* RealityDefenderClient.swift */,
@@ -379,6 +382,7 @@
 				A10000023 /* ClaudeAPIClient.swift in Sources */,
 				A10000024 /* LocalPatternScanner.swift in Sources */,
 				A10000042 /* LocalImageAnalyzer.swift in Sources */,
+				A2A6FA646622F3ABFF4AD9E3 /* ForceUpdateChecker.swift in Sources */,
 				A10000025 /* ScamAnalysisEngine.swift in Sources */,
 				A10000026 /* ChatAnalysisViewModel.swift in Sources */,
 				A10000027 /* SettingsViewModel.swift in Sources */,

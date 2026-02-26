@@ -4,6 +4,8 @@ import SwiftData
 @main
 struct LoveLlamaApp: App {
     @State private var showConsentSheet = false
+    @State private var showForceUpdate = false
+    @State private var forceUpdateMessage = ""
 
     var body: some Scene {
         WindowGroup {
@@ -13,9 +15,19 @@ struct LoveLlamaApp: App {
                         showConsentSheet = true
                     }
                 }
+                .task {
+                    let (needsUpdate, message) = await ForceUpdateChecker.check()
+                    if needsUpdate {
+                        forceUpdateMessage = message
+                        showForceUpdate = true
+                    }
+                }
                 .sheet(isPresented: $showConsentSheet) {
                     ConsentSheetView(isPresented: $showConsentSheet)
                         .interactiveDismissDisabled()
+                }
+                .fullScreenCover(isPresented: $showForceUpdate) {
+                    ForceUpdateView(message: forceUpdateMessage)
                 }
         }
         .modelContainer(for: [
@@ -133,6 +145,56 @@ struct ConsentSheetView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+        }
+    }
+}
+
+// MARK: - Force Update View
+
+struct ForceUpdateView: View {
+    let message: String
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            Image("LoveLlamaLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 80, height: 80)
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                .shadow(color: .purple.opacity(0.3), radius: 8, y: 3)
+
+            Text("Update Required")
+                .font(.title2)
+                .fontWeight(.bold)
+
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+
+            Button {
+                UIApplication.shared.open(ForceUpdateChecker.appStoreURL)
+            } label: {
+                Text("Update Now")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        LinearGradient(
+                            colors: [Color(red: 0.55, green: 0.11, blue: 0.53), Color(red: 0.93, green: 0.27, blue: 0.27)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+            }
+            .padding(.horizontal, 32)
+
+            Spacer()
         }
     }
 }
