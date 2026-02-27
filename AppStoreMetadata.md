@@ -75,6 +75,9 @@ https://YOUR-GITHUB-USERNAME.github.io/lovellama-privacy/
 
 ## What's New in This Version
 
+**v1.4**
+New situation context questionnaire in chat analysis — answer quick questions about your interactions (how long you've been talking, video call history, money requests) to boost detection accuracy. Results now include a Situation Assessment card highlighting key risk factors and a "What a Scammer Would Do Next" prediction based on the detected conversation stage.
+
 **v1.3**
 Further improved photo verification accuracy — removed metadata-based detection that caused false positives on photos shared via social media and messaging apps. Detection now relies entirely on visual analysis of image content.
 
