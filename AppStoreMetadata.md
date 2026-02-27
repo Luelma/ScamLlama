@@ -75,6 +75,9 @@ https://YOUR-GITHUB-USERNAME.github.io/lovellama-privacy/
 
 ## What's New in This Version
 
+**v1.5**
+Photo verification just got a major upgrade. Every user now gets dual analysis — on-device AI detection plus Reality Defender's deepfake technology — with results shown side by side. No API key needed for photo checks anymore. You can still add your own Reality Defender key in Settings to use your own credits.
+
 **v1.4**
 New situation context questionnaire in chat analysis — answer quick questions about your interactions (how long you've been talking, video call history, money requests) to boost detection accuracy. Results now include a Situation Assessment card highlighting key risk factors and a "What a Scammer Would Do Next" prediction based on the detected conversation stage.
 
@@ -91,13 +94,13 @@ Love Llama 1.0 — your AI-powered romance scam detector is here! Analyze chats,
 
 ## App Review Notes (for Apple reviewers)
 
-This app requires user-provided API keys to access third-party AI services:
+This app uses API keys to access third-party AI services:
 
-1. **Anthropic API Key** (for chat analysis): Users get their own key at console.anthropic.com. Without a key, the app still performs local pattern scanning with 300+ romance scam indicators.
+1. **Anthropic API Key** (for chat analysis): Users provide their own key from console.anthropic.com. Without a key, the app still performs local pattern scanning with 300+ romance scam indicators.
 
-2. **Reality Defender API Key** (for photo verification): Users get their own key at app.realitydefender.ai. This feature requires a key to function.
+2. **Reality Defender** (for photo verification): A built-in API key provides deepfake detection for all users automatically. Users may optionally add their own key in Settings to use their own credits instead.
 
-The app does NOT include any pre-configured API keys. Users must provide their own. The red flag checklist feature works entirely offline without any API key.
+The red flag checklist feature works entirely offline without any API key.
 
 Demo flow for testing:
 1. Open app → Accept data consent
