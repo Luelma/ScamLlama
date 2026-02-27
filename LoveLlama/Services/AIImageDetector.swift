@@ -106,7 +106,7 @@ struct PhotoDetectionResult: Equatable {
     var statusLabel: String {
         switch status {
         case "AUTHENTIC": return "Likely Real"
-        case "FAKE": return "Likely AI-Generated"
+        case "FAKE": return "Likely AI-Generated or Manipulated"
         case "SUSPICIOUS": return "Suspicious"
         case "NOT_APPLICABLE": return "Unable to Determine"
         case "UNABLE_TO_EVALUATE": return "Analysis Failed"
@@ -127,11 +127,11 @@ struct PhotoDetectionResult: Equatable {
         let base: String
         switch status {
         case "AUTHENTIC":
-            base = "This image shows no signs of AI generation. It appears to be a genuine photograph."
+            base = "This image shows no signs of AI generation or manipulation. It appears to be a genuine photograph."
         case "FAKE":
-            base = "This image shows strong indicators of being AI-generated. Profile photos created by AI are commonly used in romance scams."
+            base = "This image shows strong indicators of being AI-generated or manipulated. Fake or composited profile photos are commonly used in romance scams."
         case "SUSPICIOUS":
-            base = "This image has some characteristics that may indicate AI generation or manipulation. Proceed with caution."
+            base = "This image has some characteristics that may indicate AI generation or photo manipulation. Proceed with caution."
         case "NOT_APPLICABLE":
             base = "The image couldn't be reliably analyzed. This may happen with very small images, heavy filters, or non-photographic content."
         default:

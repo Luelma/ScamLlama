@@ -26,6 +26,10 @@ enum ImageCheckType: String, CaseIterable {
     case colorDistribution
     case textureUniformity
     case sharpnessPattern
+    case errorLevelAnalysis
+    case noiseConsistency
+    case edgeArtifacts
+    case lightingConsistency
 
     var displayName: String {
         switch self {
@@ -34,6 +38,10 @@ enum ImageCheckType: String, CaseIterable {
         case .colorDistribution: return "Color Distribution"
         case .textureUniformity: return "Texture Uniformity"
         case .sharpnessPattern: return "Sharpness Pattern"
+        case .errorLevelAnalysis: return "Error Level Analysis"
+        case .noiseConsistency: return "Noise Consistency"
+        case .edgeArtifacts: return "Edge Artifacts"
+        case .lightingConsistency: return "Lighting Consistency"
         }
     }
 
@@ -44,6 +52,19 @@ enum ImageCheckType: String, CaseIterable {
         case .colorDistribution: return 1.0
         case .textureUniformity: return 1.2
         case .sharpnessPattern: return 0.8       // Weak — computational photography produces uniform sharpness
+        case .errorLevelAnalysis: return 2.0     // Strong — compression artifacts reveal edited regions
+        case .noiseConsistency: return 1.5       // Composited regions have different sensor noise
+        case .edgeArtifacts: return 1.8          // Strong — solid fills + sharp edges = compositing
+        case .lightingConsistency: return 1.3    // Mismatched lighting direction across faces/background
+        }
+    }
+
+    var isAICheck: Bool {
+        switch self {
+        case .faceSymmetry, .backgroundConsistency, .colorDistribution, .textureUniformity, .sharpnessPattern:
+            return true
+        case .errorLevelAnalysis, .noiseConsistency, .edgeArtifacts, .lightingConsistency:
+            return false
         }
     }
 }
@@ -63,8 +84,13 @@ struct LocalImageAnalyzer {
         async let colorFlag = checkColorDistribution(scaled)
         async let textureFlag = checkTextureUniformity(scaled)
         async let sharpnessFlag = checkSharpnessPatterns(scaled)
+        async let edgeFlag = checkEdgeArtifacts(scaled)
+        async let elaFlag = checkErrorLevelAnalysis(scaled)
+        async let noiseFlag = checkNoiseConsistency(scaled)
+        async let lightingFlag = checkLightingConsistency(scaled)
 
-        let results = await [faceFlag, bgFlag, colorFlag, textureFlag, sharpnessFlag]
+        let results = await [faceFlag, bgFlag, colorFlag, textureFlag, sharpnessFlag,
+                             edgeFlag, elaFlag, noiseFlag, lightingFlag]
         let flags = results.compactMap { $0 }
 
         let score = calculateWeightedScore(flags)
@@ -397,23 +423,405 @@ struct LocalImageAnalyzer {
         return nil
     }
 
+    // MARK: - Check 7: Edge Artifact Detection
+
+    private func checkEdgeArtifacts(_ image: UIImage) -> ImageSuspicionFlag? {
+        guard let cgImage = image.cgImage else { return nil }
+        let ciImage = CIImage(cgImage: cgImage)
+
+        // Part A: Detect solid color fills (black rectangles, painted-over regions)
+        // Apply edge detection and check for cells with near-zero edges
+        guard let edgesFilter = CIFilter(name: "CIEdges") else { return nil }
+        edgesFilter.setValue(ciImage, forKey: kCIInputImageKey)
+        edgesFilter.setValue(1.0, forKey: kCIInputIntensityKey)
+        guard let edgeOutput = edgesFilter.outputImage else { return nil }
+
+        let width = ciImage.extent.width
+        let height = ciImage.extent.height
+        let cols = 8
+        let rows = 8
+        let cellWidth = width / CGFloat(cols)
+        let cellHeight = height / CGFloat(rows)
+
+        var solidCells = 0
+        let totalCells = cols * rows
+
+        for row in 0..<rows {
+            for col in 0..<cols {
+                let rect = CGRect(
+                    x: ciImage.extent.origin.x + CGFloat(col) * cellWidth,
+                    y: ciImage.extent.origin.y + CGFloat(row) * cellHeight,
+                    width: cellWidth,
+                    height: cellHeight
+                )
+                if let intensity = measureAverageIntensity(edgeOutput, in: rect), intensity < 0.005 {
+                    solidCells += 1
+                }
+            }
+        }
+
+        let solidRatio = Double(solidCells) / Double(totalCells)
+        var suspicion: Double = 0
+
+        if solidRatio > 0.05 {
+            // >5% solid cells — likely has painted-over / blocked regions
+            suspicion = min(0.6, solidRatio * 4.0)
+        }
+
+        // Part B: Strong edge detection for unnaturally sharp compositing boundaries
+        guard let strongEdgesFilter = CIFilter(name: "CIEdges") else { return nil }
+        strongEdgesFilter.setValue(ciImage, forKey: kCIInputImageKey)
+        strongEdgesFilter.setValue(5.0, forKey: kCIInputIntensityKey)
+        guard let strongEdgeOutput = strongEdgesFilter.outputImage else { return nil }
+
+        // Histogram the strong edge image — check for high-intensity edge concentration
+        guard let histFilter = CIFilter(name: "CIAreaHistogram") else { return nil }
+        histFilter.setValue(strongEdgeOutput, forKey: kCIInputImageKey)
+        histFilter.setValue(CIVector(cgRect: strongEdgeOutput.extent), forKey: "inputExtent")
+        histFilter.setValue(32, forKey: "inputCount")
+        histFilter.setValue(1.0, forKey: "inputScale")
+
+        guard let histOutput = histFilter.outputImage else { return nil }
+
+        var bitmap = [UInt8](repeating: 0, count: 32 * 4)
+        ciContext.render(
+            histOutput,
+            toBitmap: &bitmap,
+            rowBytes: 32 * 4,
+            bounds: CGRect(x: 0, y: 0, width: 32, height: 1),
+            format: .RGBA8,
+            colorSpace: CGColorSpaceCreateDeviceRGB()
+        )
+
+        // Sum all bins and check ratio in top bins (indices 24-31)
+        var totalEdgePixels: Double = 0
+        var topBinPixels: Double = 0
+        for i in 0..<32 {
+            let val = Double(bitmap[i * 4])
+            totalEdgePixels += val
+            if i >= 24 {
+                topBinPixels += val
+            }
+        }
+
+        if totalEdgePixels > 0 {
+            let topRatio = topBinPixels / totalEdgePixels
+            if topRatio > 0.15 {
+                // High concentration of very strong edges — compositing boundaries
+                suspicion = max(suspicion, min(0.7, topRatio * 2.5))
+            }
+        }
+
+        // Combined: solid fills + sharp edges together is very strong evidence
+        if solidRatio > 0.05 && suspicion > 0.3 {
+            suspicion = min(0.8, suspicion + 0.15)
+        }
+
+        guard suspicion > 0 else { return nil }
+
+        let finding: String
+        if solidRatio > 0.05 {
+            finding = "Detected solid color regions (\(Int(solidRatio * 100))% of image) with sharp compositing boundaries — consistent with photo manipulation"
+        } else {
+            finding = "Unnaturally sharp edge boundaries detected — may indicate composited or pasted elements"
+        }
+
+        return ImageSuspicionFlag(
+            type: .edgeArtifacts,
+            finding: finding,
+            suspicionLevel: suspicion
+        )
+    }
+
+    // MARK: - Check 8: Error Level Analysis (ELA)
+
+    private func checkErrorLevelAnalysis(_ image: UIImage) -> ImageSuspicionFlag? {
+        guard let cgImage = image.cgImage else { return nil }
+        let ciImage = CIImage(cgImage: cgImage)
+
+        // Re-compress at 75% JPEG quality
+        let uiImage = UIImage(cgImage: cgImage)
+        guard let jpegData = uiImage.jpegData(compressionQuality: 0.75),
+              let recompressedUI = UIImage(data: jpegData),
+              let recompressedCG = recompressedUI.cgImage else { return nil }
+
+        let recompressedCI = CIImage(cgImage: recompressedCG)
+
+        // Compute pixel difference using CIDifferenceBlendMode
+        guard let diffFilter = CIFilter(name: "CIDifferenceBlendMode") else { return nil }
+        diffFilter.setValue(ciImage, forKey: kCIInputImageKey)
+        diffFilter.setValue(recompressedCI, forKey: kCIInputBackgroundImageKey)
+        guard let diffOutput = diffFilter.outputImage else { return nil }
+
+        // Measure error levels across a 4x4 grid
+        let width = ciImage.extent.width
+        let height = ciImage.extent.height
+        let cols = 4
+        let rows = 4
+        let cellWidth = width / CGFloat(cols)
+        let cellHeight = height / CGFloat(rows)
+
+        var cellIntensities: [Double] = []
+
+        for row in 0..<rows {
+            for col in 0..<cols {
+                let rect = CGRect(
+                    x: ciImage.extent.origin.x + CGFloat(col) * cellWidth,
+                    y: ciImage.extent.origin.y + CGFloat(row) * cellHeight,
+                    width: cellWidth,
+                    height: cellHeight
+                )
+                if let intensity = measureAverageIntensity(diffOutput, in: rect) {
+                    cellIntensities.append(intensity)
+                }
+            }
+        }
+
+        guard cellIntensities.count >= 16 else { return nil }
+
+        let mean = cellIntensities.reduce(0, +) / Double(cellIntensities.count)
+        guard mean > 0 else { return nil }
+
+        let variance = cellIntensities.map { ($0 - mean) * ($0 - mean) }.reduce(0, +) / Double(cellIntensities.count)
+        let cv = sqrt(variance) / mean
+
+        // Count outlier cells (intensity > 2x mean)
+        let outliers = cellIntensities.filter { $0 > mean * 2.0 }.count
+        let outlierRatio = Double(outliers) / Double(cellIntensities.count)
+
+        // Authentic photos have uniform compression artifacts (low CV)
+        // Composites show inconsistent error levels where edits were made
+        guard cv > 0.6 || outlierRatio > 0.2 else { return nil }
+
+        let suspicion = min(0.7, max(cv * 0.5, outlierRatio * 2.0))
+
+        return ImageSuspicionFlag(
+            type: .errorLevelAnalysis,
+            finding: "Inconsistent compression artifacts detected across the image (CV: \(String(format: "%.2f", cv))) — regions may have been edited or composited from different sources",
+            suspicionLevel: suspicion
+        )
+    }
+
+    // MARK: - Check 9: Noise/Grain Consistency
+
+    private func checkNoiseConsistency(_ image: UIImage) -> ImageSuspicionFlag? {
+        guard let cgImage = image.cgImage else { return nil }
+        let ciImage = CIImage(cgImage: cgImage)
+
+        // Extract noise layer: blur the image then subtract to isolate noise
+        guard let blurFilter = CIFilter(name: "CIGaussianBlur") else { return nil }
+        blurFilter.setValue(ciImage, forKey: kCIInputImageKey)
+        blurFilter.setValue(3.0, forKey: kCIInputRadiusKey)
+        guard let blurredOutput = blurFilter.outputImage else { return nil }
+
+        // Crop blurred image to original extent (blur extends bounds)
+        let blurredCropped = blurredOutput.cropped(to: ciImage.extent)
+
+        // Difference to isolate noise
+        guard let diffFilter = CIFilter(name: "CIDifferenceBlendMode") else { return nil }
+        diffFilter.setValue(ciImage, forKey: kCIInputImageKey)
+        diffFilter.setValue(blurredCropped, forKey: kCIInputBackgroundImageKey)
+        guard let noiseOutput = diffFilter.outputImage else { return nil }
+
+        // Measure noise energy across 4x4 grid
+        let width = ciImage.extent.width
+        let height = ciImage.extent.height
+        let cols = 4
+        let rows = 4
+        let cellWidth = width / CGFloat(cols)
+        let cellHeight = height / CGFloat(rows)
+
+        var noiseEnergies: [Double] = []
+
+        for row in 0..<rows {
+            for col in 0..<cols {
+                let rect = CGRect(
+                    x: ciImage.extent.origin.x + CGFloat(col) * cellWidth,
+                    y: ciImage.extent.origin.y + CGFloat(row) * cellHeight,
+                    width: cellWidth,
+                    height: cellHeight
+                )
+                if let intensity = measureAverageIntensity(noiseOutput, in: rect) {
+                    noiseEnergies.append(intensity)
+                }
+            }
+        }
+
+        guard noiseEnergies.count >= 16 else { return nil }
+
+        let mean = noiseEnergies.reduce(0, +) / Double(noiseEnergies.count)
+        guard mean > 0 else { return nil }
+
+        let variance = noiseEnergies.map { ($0 - mean) * ($0 - mean) }.reduce(0, +) / Double(noiseEnergies.count)
+        let cv = sqrt(variance) / mean
+
+        let maxNoise = noiseEnergies.max() ?? 0
+        let minNoise = noiseEnergies.min() ?? 0
+        let noiseRatio = minNoise > 0 ? maxNoise / minNoise : 0
+
+        // Dual gate: both CV and max/min ratio must be high
+        // Different source photos have different sensor noise patterns
+        guard cv > 0.5 && noiseRatio > 2.5 else { return nil }
+
+        let suspicion = min(0.6, cv * 0.4 + (noiseRatio - 2.5) * 0.1)
+
+        return ImageSuspicionFlag(
+            type: .noiseConsistency,
+            finding: "Inconsistent noise/grain patterns detected across the image — different regions may originate from different source photos",
+            suspicionLevel: suspicion
+        )
+    }
+
+    // MARK: - Check 10: Lighting Direction Analysis
+
+    private func checkLightingConsistency(_ image: UIImage) async -> ImageSuspicionFlag? {
+        guard let cgImage = image.cgImage else { return nil }
+        let ciImage = CIImage(cgImage: cgImage)
+
+        // Detect faces
+        let request = VNDetectFaceRectanglesRequest()
+        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+
+        do {
+            try handler.perform([request])
+        } catch {
+            return nil
+        }
+
+        guard let faces = request.results, !faces.isEmpty else { return nil }
+
+        let width = ciImage.extent.width
+        let height = ciImage.extent.height
+
+        // For each face, estimate light direction from left/right luminance difference
+        var faceLightDirections: [Double] = []
+
+        for face in faces {
+            let bbox = face.boundingBox
+            let faceRect = CGRect(
+                x: bbox.origin.x * width,
+                y: bbox.origin.y * height,
+                width: bbox.width * width,
+                height: bbox.height * height
+            )
+
+            let leftHalf = CGRect(
+                x: faceRect.origin.x,
+                y: faceRect.origin.y,
+                width: faceRect.width / 2,
+                height: faceRect.height
+            )
+            let rightHalf = CGRect(
+                x: faceRect.origin.x + faceRect.width / 2,
+                y: faceRect.origin.y,
+                width: faceRect.width / 2,
+                height: faceRect.height
+            )
+
+            // Convert to grayscale for luminance measurement
+            guard let grayFilter = CIFilter(name: "CIColorControls") else { continue }
+            grayFilter.setValue(ciImage, forKey: kCIInputImageKey)
+            grayFilter.setValue(0.0, forKey: kCIInputSaturationKey)
+            guard let grayImage = grayFilter.outputImage else { continue }
+
+            guard let leftLum = measureAverageIntensity(grayImage, in: leftHalf),
+                  let rightLum = measureAverageIntensity(grayImage, in: rightHalf) else {
+                continue
+            }
+
+            // Light direction: positive = lit from right, negative = lit from left
+            let direction = rightLum - leftLum
+            faceLightDirections.append(direction)
+        }
+
+        guard !faceLightDirections.isEmpty else { return nil }
+
+        // Measure background light direction (top-left vs top-right of image)
+        guard let grayFilter = CIFilter(name: "CIColorControls") else { return nil }
+        grayFilter.setValue(ciImage, forKey: kCIInputImageKey)
+        grayFilter.setValue(0.0, forKey: kCIInputSaturationKey)
+        guard let grayImage = grayFilter.outputImage else { return nil }
+
+        let bgLeftRect = CGRect(x: 0, y: height * 0.6, width: width * 0.3, height: height * 0.4)
+        let bgRightRect = CGRect(x: width * 0.7, y: height * 0.6, width: width * 0.3, height: height * 0.4)
+
+        guard let bgLeftLum = measureAverageIntensity(grayImage, in: bgLeftRect),
+              let bgRightLum = measureAverageIntensity(grayImage, in: bgRightRect) else {
+            return nil
+        }
+
+        let bgDirection = bgRightLum - bgLeftLum
+
+        var suspicion: Double = 0
+        var finding = ""
+
+        // Check face-to-background lighting conflict
+        for faceDir in faceLightDirections {
+            let conflict = faceDir * bgDirection // Negative product = opposite directions
+            if conflict < -0.08 {
+                suspicion = max(suspicion, min(0.6, abs(conflict) * 3.0))
+                finding = "Face lighting direction conflicts with background lighting — the face may have been composited from a different photo"
+            }
+        }
+
+        // Check face-to-face lighting consistency (if multiple faces)
+        if faceLightDirections.count >= 2 {
+            let maxDir = faceLightDirections.max() ?? 0
+            let minDir = faceLightDirections.min() ?? 0
+            let spread = maxDir - minDir
+
+            if spread > 0.25 {
+                let multiFaceSuspicion = min(0.6, spread * 1.5)
+                if multiFaceSuspicion > suspicion {
+                    suspicion = multiFaceSuspicion
+                    finding = "Faces in the image show inconsistent lighting directions (spread: \(String(format: "%.2f", spread))) — they may have been composited from different photos"
+                }
+            }
+        }
+
+        guard suspicion > 0 else { return nil }
+
+        return ImageSuspicionFlag(
+            type: .lightingConsistency,
+            finding: finding,
+            suspicionLevel: suspicion
+        )
+    }
+
     // MARK: - Scoring
 
     private func calculateWeightedScore(_ flags: [ImageSuspicionFlag]) -> Double {
         guard !flags.isEmpty else { return 0.0 }
 
-        let totalWeight = ImageCheckType.allCases.reduce(0.0) { $0 + $1.weight }
-        var weightedSum: Double = 0
+        // Category-based scoring: compute AI and composite scores independently
+        // within their own weight pools, then take the max.
+        // This prevents adding composite checks from diluting AI detection sensitivity.
+        let aiChecks = ImageCheckType.allCases.filter { $0.isAICheck }
+        let compositeChecks = ImageCheckType.allCases.filter { !$0.isAICheck }
+
+        let aiTotalWeight = aiChecks.reduce(0.0) { $0 + $1.weight }
+        let compositeTotalWeight = compositeChecks.reduce(0.0) { $0 + $1.weight }
+
+        var aiWeightedSum: Double = 0
+        var compositeWeightedSum: Double = 0
 
         for flag in flags {
-            weightedSum += flag.suspicionLevel * flag.type.weight
+            if flag.type.isAICheck {
+                aiWeightedSum += flag.suspicionLevel * flag.type.weight
+            } else {
+                compositeWeightedSum += flag.suspicionLevel * flag.type.weight
+            }
         }
 
-        var score = weightedSum / totalWeight
+        let aiScore = aiTotalWeight > 0 ? aiWeightedSum / aiTotalWeight : 0
+        let compositeScore = compositeTotalWeight > 0 ? compositeWeightedSum / compositeTotalWeight : 0
 
-        // No co-occurrence or face+other bonuses — let the weighted average
-        // speak for itself. Compound multipliers inflated weak signals into
-        // false positives on normal selfies.
+        var score = max(aiScore, compositeScore)
+
+        // If both categories flag, add a bonus — evidence of both AI and compositing
+        if aiScore > 0.15 && compositeScore > 0.15 {
+            score += 0.1
+        }
 
         return min(1.0, max(0.0, score))
     }
@@ -431,21 +839,33 @@ struct LocalImageAnalyzer {
 
     private func buildSummary(flags: [ImageSuspicionFlag], riskLevel: RiskLevel) -> String {
         if flags.isEmpty {
-            return "On-device analysis found no obvious signs of AI generation. The image passed all heuristic checks."
+            return "On-device analysis found no obvious signs of AI generation or photo manipulation. The image passed all heuristic checks."
         }
 
         let flagDescriptions = flags.map { $0.type.displayName }
         let joined = flagDescriptions.joined(separator: ", ")
 
+        let hasAIFlags = flags.contains { $0.type.isAICheck }
+        let hasCompositeFlags = flags.contains { !$0.type.isAICheck }
+
+        let threatDescription: String
+        if hasAIFlags && hasCompositeFlags {
+            threatDescription = "AI generation and photo manipulation"
+        } else if hasCompositeFlags {
+            threatDescription = "photo manipulation or compositing"
+        } else {
+            threatDescription = "AI generation"
+        }
+
         switch riskLevel {
         case .low:
             return "Minor indicators detected (\(joined)), but overall the image appears genuine."
         case .medium:
-            return "Some suspicious characteristics found: \(joined). The image may warrant further investigation."
+            return "Some suspicious characteristics found: \(joined). The image may warrant further investigation for \(threatDescription)."
         case .high:
-            return "Multiple AI indicators detected: \(joined). This image shows significant signs of being AI-generated."
+            return "Multiple indicators detected: \(joined). This image shows significant signs of \(threatDescription)."
         case .critical:
-            return "Strong AI generation indicators found across multiple checks: \(joined). This image is very likely AI-generated."
+            return "Strong indicators found across multiple checks: \(joined). This image is very likely the result of \(threatDescription)."
         }
     }
 
