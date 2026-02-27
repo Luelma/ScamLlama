@@ -22,7 +22,7 @@ class PhotoVerificationViewModel {
         }
     }
 
-    var detectionResult: PhotoDetectionResult? {
+    var analysisResult: PhotoAnalysisResult? {
         if case .complete(let result) = detector.state {
             return result
         }
@@ -39,18 +39,19 @@ class PhotoVerificationViewModel {
     func analyze() async {
         guard let image = selectedImage else { return }
         await detector.analyze(image: image)
-        if detectionResult != nil {
+        if analysisResult != nil {
             showingResult = true
         }
     }
 
     func saveResult(modelContext: ModelContext) {
-        guard let result = detectionResult else { return }
+        guard let analysis = analysisResult else { return }
+        let result = analysis.overallResult
         let check = PhotoCheck(imageData: selectedImage?.jpegData(compressionQuality: 0.5))
         check.detectionStatus = result.status
         check.aiScore = result.score
         check.requestId = result.requestId
-        check.isLocalOnly = result.isLocalOnly
+        check.isLocalOnly = analysis.rdResult == nil
         modelContext.insert(check)
     }
 
