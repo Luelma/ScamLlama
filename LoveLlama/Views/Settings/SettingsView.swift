@@ -52,30 +52,54 @@ struct SettingsView: View {
                     Text("Powers AI chat analysis. Stored in the iOS Keychain.")
                 }
 
-                // Reality Defender API Key
+                // Reality Defender
                 Section {
-                    if viewModel.hasRDKey && !viewModel.showRDKey {
-                        HStack {
-                            Label("API Key", systemImage: "key.fill")
-                            Spacer()
-                            Text(viewModel.maskedRDKey)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                    if viewModel.hasRDKey {
+                        // User has their own key saved
+                        if !viewModel.showRDKey {
+                            HStack {
+                                Label("Your Key", systemImage: "key.fill")
+                                Spacer()
+                                Text(viewModel.maskedRDKey)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .monospaced()
+                            }
+                            Button("Show Key") {
+                                viewModel.showRDKey = true
+                                Task { await viewModel.revealRDKey() }
+                            }
+                            Button("Remove Key (use built-in)", role: .destructive) { showRDDeleteConfirmation = true }
+                        } else {
+                            SecureField("Your Reality Defender key", text: $viewModel.rdApiKey)
+                                .textContentType(.password)
+                                .autocorrectionDisabled()
+                                .textInputAutocapitalization(.never)
                                 .monospaced()
+                                .font(.caption)
+                            Button("Save API Key") {
+                                Task { await viewModel.saveRDKey() }
+                            }
+                            .disabled(viewModel.rdApiKey.trimmingCharacters(in: .whitespaces).isEmpty)
                         }
-                        Button("Show Key") {
-                            viewModel.showRDKey = true
-                            Task { await viewModel.revealRDKey() }
-                        }
-                        Button("Remove Key", role: .destructive) { showRDDeleteConfirmation = true }
                     } else {
-                        SecureField("Your Reality Defender key", text: $viewModel.rdApiKey)
+                        // No user key — using embedded
+                        HStack {
+                            Label("Reality Defender", systemImage: "checkmark.seal.fill")
+                                .foregroundStyle(.indigo)
+                            Spacer()
+                            Text("Built-in")
+                                .font(.caption)
+                                .foregroundStyle(.green)
+                        }
+
+                        SecureField("Use your own key instead", text: $viewModel.rdApiKey)
                             .textContentType(.password)
                             .autocorrectionDisabled()
                             .textInputAutocapitalization(.never)
                             .monospaced()
                             .font(.caption)
-                        Button("Save API Key") {
+                        Button("Save Custom Key") {
                             Task { await viewModel.saveRDKey() }
                         }
                         .disabled(viewModel.rdApiKey.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -86,9 +110,12 @@ struct SettingsView: View {
                             .foregroundStyle(viewModel.isRDError ? .red : .green)
                     }
                 } header: {
-                    Text("Reality Defender API Key")
+                    Text("Reality Defender Photo Analysis")
                 } footer: {
-                    Text("Powers AI photo detection. You have 500 credits (1 per scan).")
+                    Text(viewModel.hasRDKey
+                        ? "Using your custom key. Remove it to switch back to built-in analysis."
+                        : "Built-in Reality Defender analysis is included. Add your own key to use your credits instead."
+                    )
                 }
 
                 // Data & Privacy

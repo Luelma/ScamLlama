@@ -2,6 +2,32 @@ import Foundation
 import UIKit
 import Observation
 
+/// Combined result containing both local and Reality Defender analysis.
+struct PhotoAnalysisResult: Equatable {
+    var localResult: PhotoDetectionResult
+    var rdResult: PhotoDetectionResult?
+    /// Whether RD analysis is still in progress (local finished, RD pending).
+    var rdLoading: Bool = false
+    /// If RD failed, a user-facing reason.
+    var rdError: String? = nil
+
+    /// The higher-risk result drives the overall verdict.
+    var overallResult: PhotoDetectionResult {
+        guard let rd = rdResult else { return localResult }
+        let order: [RiskLevel] = [.low, .medium, .high, .critical]
+        let rdIndex = order.firstIndex(of: rd.riskLevel) ?? 0
+        let localIndex = order.firstIndex(of: localResult.riskLevel) ?? 0
+        return rdIndex >= localIndex ? rd : localResult
+    }
+
+    static func == (lhs: PhotoAnalysisResult, rhs: PhotoAnalysisResult) -> Bool {
+        lhs.localResult.status == rhs.localResult.status &&
+        lhs.rdResult?.status == rhs.rdResult?.status &&
+        lhs.rdLoading == rhs.rdLoading &&
+        lhs.rdError == rhs.rdError
+    }
+}
+
 @Observable
 class AIImageDetector {
     enum State: Equatable {
@@ -9,7 +35,7 @@ class AIImageDetector {
         case scanning       // Local on-device analysis
         case uploading      // Uploading to Reality Defender
         case analyzing      // Waiting for Reality Defender results
-        case complete(result: PhotoDetectionResult)
+        case complete(result: PhotoAnalysisResult)
         case error(String)
 
         static func == (lhs: State, rhs: State) -> Bool {
@@ -17,7 +43,7 @@ class AIImageDetector {
             case (.idle, .idle), (.scanning, .scanning), (.uploading, .uploading), (.analyzing, .analyzing):
                 return true
             case (.complete(let a), .complete(let b)):
-                return a.status == b.status
+                return a == b
             case (.error(let a), .error(let b)):
                 return a == b
             default:
@@ -37,38 +63,49 @@ class AIImageDetector {
         state = .scanning
         let localResult = await localAnalyzer.analyze(image)
         localScanResult = localResult
+        let localDetection = buildLocalOnlyResult(from: localResult)
 
-        // Step 2: Check both general and per-feature consent before uploading
+        // Step 2: Check consent before attempting RD
         guard ConsentManager.shared.hasConsented,
               ConsentManager.shared.hasConsentedPhotoAPI else {
-            let result = buildLocalOnlyResult(from: localResult)
-            state = .complete(result: result)
+            let analysis = PhotoAnalysisResult(localResult: localDetection)
+            state = .complete(result: analysis)
             return
         }
 
-        // Step 3: Check for Reality Defender API key
-        guard let apiKey = await RDKeyManager.shared.getKey() else {
-            let result = buildLocalOnlyResult(from: localResult)
-            state = .complete(result: result)
+        // Step 3: Resolve API key — user key first, then embedded key
+        let userKey = await RDKeyManager.shared.getKey()
+        let apiKey = userKey ?? EmbeddedKeyProvider.rdAPIKey()
+
+        guard !apiKey.isEmpty else {
+            let analysis = PhotoAnalysisResult(localResult: localDetection)
+            state = .complete(result: analysis)
             return
         }
 
-        // Step 4: Try Reality Defender API for deeper analysis
+        // Show local result immediately with RD loading indicator
+        state = .complete(result: PhotoAnalysisResult(localResult: localDetection, rdLoading: true))
+
+        // Step 4: Try Reality Defender API
         state = .uploading
 
         do {
             state = .analyzing
             let apiResult = try await client.analyzeImage(image, apiKey: apiKey)
-            let detectionResult = PhotoDetectionResult(
+            let rdDetection = PhotoDetectionResult(
                 status: apiResult.status,
                 score: apiResult.score,
                 requestId: apiResult.requestId
             )
-            state = .complete(result: detectionResult)
+            let analysis = PhotoAnalysisResult(localResult: localDetection, rdResult: rdDetection)
+            state = .complete(result: analysis)
         } catch {
-            // Step 5: Fall back to local result on API failure
-            let result = buildLocalOnlyResult(from: localResult)
-            state = .complete(result: result)
+            // RD failed — show local result + error message for RD card
+            let analysis = PhotoAnalysisResult(
+                localResult: localDetection,
+                rdError: "Reality Defender analysis unavailable"
+            )
+            state = .complete(result: analysis)
         }
     }
 
@@ -78,17 +115,16 @@ class AIImageDetector {
     }
 
     private func buildLocalOnlyResult(from localResult: LocalImageScanResult) -> PhotoDetectionResult {
-        // Map local risk level to status strings used by PhotoDetectionResult
         let status: String
         switch localResult.riskLevel {
         case .low: status = "AUTHENTIC"
         case .medium, .high: status = "SUSPICIOUS"
-        case .critical: status = "FAKE"          // Only label FAKE when evidence is very strong
+        case .critical: status = "FAKE"
         }
 
         return PhotoDetectionResult(
             status: status,
-            score: localResult.overallScore * 100, // Convert 0-1 to 0-100
+            score: localResult.overallScore * 100,
             requestId: "",
             isLocalOnly: true,
             suspicionFlags: localResult.suspicionFlags.map { $0.finding }
@@ -124,24 +160,18 @@ struct PhotoDetectionResult: Equatable {
     }
 
     var explanation: String {
-        let base: String
         switch status {
         case "AUTHENTIC":
-            base = "This image shows no signs of AI generation or manipulation. It appears to be a genuine photograph."
+            return "This image shows no signs of AI generation or manipulation. It appears to be a genuine photograph."
         case "FAKE":
-            base = "This image shows strong indicators of being AI-generated or manipulated. Fake or composited profile photos are commonly used in romance scams."
+            return "This image shows strong indicators of being AI-generated or manipulated. Fake or composited profile photos are commonly used in romance scams."
         case "SUSPICIOUS":
-            base = "This image has some characteristics that may indicate AI generation or photo manipulation. Proceed with caution."
+            return "This image has some characteristics that may indicate AI generation or photo manipulation. Proceed with caution."
         case "NOT_APPLICABLE":
-            base = "The image couldn't be reliably analyzed. This may happen with very small images, heavy filters, or non-photographic content."
+            return "The image couldn't be reliably analyzed. This may happen with very small images, heavy filters, or non-photographic content."
         default:
-            base = "Analysis could not be completed. Try again with a different image."
+            return "Analysis could not be completed. Try again with a different image."
         }
-
-        if isLocalOnly {
-            return base + "\n\nThis result was produced by on-device analysis with reduced accuracy. For more reliable results, add a Reality Defender API key in Settings."
-        }
-        return base
     }
 }
 

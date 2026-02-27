@@ -51,6 +51,7 @@
 		A10000040 /* ConsentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000040 /* ConsentManager.swift */; };
 		A10000041 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000041 /* PrivacyPolicyView.swift */; };
 		A10000043 /* ConversationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000043 /* ConversationContext.swift */; };
+		A10000044 /* EmbeddedKeyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000044 /* EmbeddedKeyProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -98,6 +99,7 @@
 		A20000040 /* ConsentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentManager.swift; sourceTree = "<group>"; };
 		A20000041 /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		A20000043 /* ConversationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationContext.swift; sourceTree = "<group>"; };
+		A20000044 /* EmbeddedKeyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedKeyProvider.swift; sourceTree = "<group>"; };
 		A30000001 /* LoveLlama.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LoveLlama.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -171,6 +173,7 @@
 				A20000032 /* RealityDefenderClient.swift */,
 				A20000033 /* AIImageDetector.swift */,
 				A20000040 /* ConsentManager.swift */,
+				A20000044 /* EmbeddedKeyProvider.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -403,6 +406,7 @@
 				A10000038 /* BrandedNavTitle.swift in Sources */,
 				A10000040 /* ConsentManager.swift in Sources */,
 				A10000041 /* PrivacyPolicyView.swift in Sources */,
+				A10000044 /* EmbeddedKeyProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

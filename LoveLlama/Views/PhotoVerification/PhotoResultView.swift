@@ -1,10 +1,12 @@
 import SwiftUI
 
 struct PhotoResultView: View {
-    let result: PhotoDetectionResult
+    let analysis: PhotoAnalysisResult
     var image: UIImage?
     var onSave: (() -> Void)?
     @State private var saved = false
+
+    private var overall: PhotoDetectionResult { analysis.overallResult }
 
     var body: some View {
         ScrollView {
@@ -18,82 +20,55 @@ struct PhotoResultView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(result.riskLevel.color, lineWidth: 3)
+                                .stroke(overall.riskLevel.color, lineWidth: 3)
                         )
                         .padding(.top, 8)
                 }
 
-                // Status + score
+                // Overall verdict
                 VStack(spacing: 12) {
-                    Image(systemName: statusIcon)
+                    Image(systemName: statusIcon(for: overall))
                         .font(.system(size: 44))
-                        .foregroundStyle(result.riskLevel.color)
+                        .foregroundStyle(overall.riskLevel.color)
 
-                    Text(result.statusLabel)
+                    Text(overall.statusLabel)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundStyle(result.riskLevel.color)
+                        .foregroundStyle(overall.riskLevel.color)
 
-                    if let score = result.score {
-                        Text("Risk Score: \(Int(score))%")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(result.riskLevel.color)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 10)
-                            .background(result.riskLevel.color.opacity(0.1))
-                            .clipShape(Capsule())
-                    }
-
-                    RiskBadgeView(riskLevel: result.riskLevel)
+                    RiskBadgeView(riskLevel: overall.riskLevel)
                 }
 
-                // Attribution badge
-                if result.isLocalOnly {
-                    HStack(spacing: 6) {
-                        Image(systemName: "iphone")
-                            .foregroundStyle(.purple)
-                        Text("On-Device Analysis")
-                            .fontWeight(.medium)
-                    }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-                    .background(Color.purple.opacity(0.08))
-                    .clipShape(Capsule())
-                } else {
-                    HStack(spacing: 6) {
-                        Image(systemName: "checkmark.seal.fill")
-                            .foregroundStyle(.indigo)
-                        Text("Powered by Reality Defender")
-                            .fontWeight(.medium)
-                    }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-                    .background(Color.indigo.opacity(0.08))
-                    .clipShape(Capsule())
-                }
+                // Side-by-side analysis cards
+                VStack(spacing: 12) {
+                    // On-Device Analysis card
+                    analysisCard(
+                        title: "On-Device Analysis",
+                        icon: "iphone",
+                        color: .purple,
+                        result: analysis.localResult
+                    )
 
-                // Explanation
-                VStack(alignment: .leading, spacing: 12) {
-                    Label("Analysis", systemImage: "magnifyingglass")
-                        .font(.headline)
-
-                    Text(result.explanation)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    // Reality Defender card
+                    if analysis.rdLoading {
+                        rdLoadingCard()
+                    } else if let rdError = analysis.rdError {
+                        rdErrorCard(message: rdError)
+                    } else if let rdResult = analysis.rdResult {
+                        analysisCard(
+                            title: "Reality Defender",
+                            icon: "checkmark.seal.fill",
+                            color: .indigo,
+                            result: rdResult
+                        )
+                    } else {
+                        rdUnavailableCard()
+                    }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
                 .padding(.horizontal)
 
-                // Suspicion flags (local-only results)
-                if let flags = result.suspicionFlags, !flags.isEmpty {
+                // Detection Signals (local flags)
+                if let flags = analysis.localResult.suspicionFlags, !flags.isEmpty {
                     VStack(alignment: .leading, spacing: 10) {
                         Label("Detection Signals", systemImage: "list.bullet.rectangle")
                             .font(.subheadline)
@@ -125,10 +100,7 @@ struct PhotoResultView: View {
                         .fontWeight(.semibold)
                         .foregroundStyle(.orange)
 
-                    Text(result.isLocalOnly
-                        ? "This result was produced by on-device heuristic analysis, which has reduced accuracy compared to API-based detection. It checks for common AI image artifacts but cannot reliably detect all AI-generated images. Always verify identities through video calls."
-                        : "AI detection is not 100% accurate. This result is an indicator, not proof. Always verify identities through video calls and other means."
-                    )
+                    Text("AI detection is not 100% accurate. These results are indicators, not proof. Always verify identities through video calls and other means.")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
@@ -163,7 +135,117 @@ struct PhotoResultView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private var statusIcon: String {
+    // MARK: - Card Views
+
+    private func analysisCard(title: String, icon: String, color: Color, result: PhotoDetectionResult) -> some View {
+        VStack(spacing: 10) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundStyle(color)
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Spacer()
+                Image(systemName: statusIcon(for: result))
+                    .foregroundStyle(result.riskLevel.color)
+            }
+
+            Divider()
+
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(result.statusLabel)
+                        .font(.callout)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(result.riskLevel.color)
+
+                    if let score = result.score {
+                        Text("Risk Score: \(Int(score))%")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                Spacer()
+                RiskBadgeView(riskLevel: result.riskLevel)
+            }
+        }
+        .padding()
+        .background(color.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(color.opacity(0.2), lineWidth: 1)
+        )
+    }
+
+    private func rdLoadingCard() -> some View {
+        VStack(spacing: 10) {
+            HStack {
+                Image(systemName: "checkmark.seal.fill")
+                    .foregroundStyle(.indigo)
+                Text("Reality Defender")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Spacer()
+            }
+
+            Divider()
+
+            HStack(spacing: 12) {
+                ProgressView()
+                Text("Analyzing...")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+        }
+        .padding()
+        .background(Color.indigo.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(Color.indigo.opacity(0.2), lineWidth: 1)
+        )
+    }
+
+    private func rdErrorCard(message: String) -> some View {
+        VStack(spacing: 10) {
+            HStack {
+                Image(systemName: "checkmark.seal.fill")
+                    .foregroundStyle(.indigo)
+                Text("Reality Defender")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Spacer()
+                Image(systemName: "exclamationmark.circle")
+                    .foregroundStyle(.secondary)
+            }
+
+            Divider()
+
+            HStack {
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+        }
+        .padding()
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
+        )
+    }
+
+    private func rdUnavailableCard() -> some View {
+        rdErrorCard(message: "Photo sharing consent required for Reality Defender analysis")
+    }
+
+    // MARK: - Helpers
+
+    private func statusIcon(for result: PhotoDetectionResult) -> String {
         switch result.status {
         case "AUTHENTIC": return "checkmark.shield.fill"
         case "FAKE": return "xmark.shield.fill"
