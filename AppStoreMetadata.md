@@ -28,14 +28,14 @@ ANALYZE CONVERSATIONS
 Paste suspicious messages or scan screenshots, and Love Llama's AI engine instantly detects manipulation tactics like love bombing, urgency pressure, financial requests, isolation tactics, and more. Get a clear risk score with detailed explanations of every red flag found.
 
 VERIFY PROFILE PHOTOS
-Wonder if that profile pic is a real person or an AI-generated catfish? Upload any photo and Love Llama checks it against advanced AI detection models to determine if the image is authentic or computer-generated.
+Wonder if that profile pic is a real person or an AI-generated catfish? Upload any photo and Love Llama runs dual analysis — on-device AI detection plus Reality Defender's deepfake technology — and shows both results side by side. No API key required for photo checks.
 
 SPOT RED FLAGS WITH THE CHECKLIST
 Not sure if something feels off? Walk through our interactive red flag checklist covering financial, emotional, communication, and identity warning signs. Get an instant risk assessment based on your selections.
 
 FEATURES AT A GLANCE
 - AI-powered chat analysis with 300+ scam pattern detections
-- AI-generated photo detection for catfish spotting
+- Built-in AI photo verification — no API key needed
 - Interactive red flag checklist with weighted scoring
 - Local pattern scanning works without internet
 - Analysis history to track and review past checks
@@ -43,7 +43,7 @@ FEATURES AT A GLANCE
 - No tracking, no ads, no data sharing
 
 POWERED BY ADVANCED AI
-Love Llama combines on-device pattern matching (300+ romance scam indicators) with optional cloud AI analysis via Anthropic's Claude for deeper insights. Photo verification uses Reality Defender's detection technology. You bring your own API keys — we never see your credentials.
+Love Llama combines on-device pattern matching (300+ romance scam indicators) with optional cloud AI analysis via Anthropic's Claude for deeper insights. Photo verification includes built-in Reality Defender deepfake detection — no setup required. Chat analysis uses your own Anthropic API key, stored securely in the iOS Keychain.
 
 YOUR PRIVACY MATTERS
 - All data stored locally with iOS encryption
