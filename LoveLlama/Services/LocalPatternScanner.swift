@@ -500,6 +500,11 @@ struct LocalPatternScanner {
             }
         }
 
+        // Detect suspicious emoji-only/emoji-heavy short messages (common scam opener)
+        if let emojiFlag = detectSuspiciousOpener(safeText) {
+            flagged.append(emojiFlag)
+        }
+
         // Generate synthetic flags from context
         if let context = context {
             flagged = applySyntheticFlags(flagged: flagged, context: context)
@@ -527,6 +532,78 @@ struct LocalPatternScanner {
             summary: summary,
             recommendation: recommendation,
             nextMovePrediction: prediction
+        )
+    }
+
+    // MARK: - Suspicious Opener Detection
+
+    /// Romantic/flirty emojis commonly used in scam openers
+    private static let romanticEmojis: Set<Character> = [
+        "\u{1F60D}", // 😍
+        "\u{1F970}", // 🥰
+        "\u{1F618}", // 😘
+        "\u{1F617}", // 😗
+        "\u{1F619}", // 😙
+        "\u{1F61A}", // 😚
+        "\u{2764}",  // ❤️
+        "\u{1F495}", // 💕
+        "\u{1F496}", // 💖
+        "\u{1F497}", // 💗
+        "\u{1F498}", // 💘
+        "\u{1F49D}", // 💝
+        "\u{1F49E}", // 💞
+        "\u{1F49F}", // 💟
+        "\u{1F48B}", // 💋
+        "\u{1F339}", // 🌹
+        "\u{1F48C}", // 💌
+        "\u{1F60A}", // 😊
+        "\u{1F609}", // 😉
+        "\u{1F525}", // 🔥
+        "\u{2728}",  // ✨
+        "\u{1FA77}", // 🩷
+    ]
+
+    /// Detects short/emoji-only messages with romantic emojis — a common "shotgun" scam opener
+    private func detectSuspiciousOpener(_ text: String) -> LocalScanResult.FlaggedPattern? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+
+        // Strip all emoji to measure actual text content
+        let nonEmoji = trimmed.unicodeScalars.filter { scalar in
+            !scalar.properties.isEmoji || scalar.isASCII
+        }
+        let nonEmojiText = String(nonEmoji).trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Count romantic emojis in the message
+        let romanticCount = trimmed.filter { Self.romanticEmojis.contains($0) }.count
+
+        // Flag if: message is very short on actual text AND contains romantic emojis
+        // This catches: "😍", "hey 🥰", "hi 😘❤️", "💋💋💋", etc.
+        guard nonEmojiText.count <= 15, romanticCount >= 1 else { return nil }
+
+        // Scale confidence based on how emoji-heavy the message is
+        let confidence: Double
+        let matchedDescription: String
+        if nonEmojiText.isEmpty {
+            // Pure emoji message (e.g., "😍🥰" or "❤️")
+            confidence = 0.55
+            matchedDescription = "Emoji-only message with romantic emojis"
+        } else if romanticCount >= 2 {
+            // Short text + multiple romantic emojis
+            confidence = 0.50
+            matchedDescription = "Very short message heavy with romantic emojis"
+        } else {
+            // Short text + single romantic emoji (e.g., "hey 😍")
+            confidence = 0.40
+            matchedDescription = "Short message with romantic emoji"
+        }
+
+        return .init(
+            patternType: .suspiciousOpener,
+            matchedPhrases: [matchedDescription],
+            matchCount: romanticCount,
+            confidence: confidence,
+            explanation: "Very short or emoji-only messages with romantic emojis from unknown contacts are a common 'shotgun' tactic — scammers send these to many numbers hoping someone engages. A real person who knows you would say more than just an emoji. Don't respond to unsolicited messages like this."
         )
     }
 
