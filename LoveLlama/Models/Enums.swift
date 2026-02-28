@@ -48,6 +48,7 @@ enum ScamPatternType: String, Codable, CaseIterable {
     case tragicBackstory
     case futurePromises
     case aiGeneratedText
+    case suspiciousOpener
 
     var displayName: String {
         switch self {
@@ -67,6 +68,7 @@ enum ScamPatternType: String, Codable, CaseIterable {
         case .tragicBackstory: return "Tragic Backstory"
         case .futurePromises: return "Future Promises"
         case .aiGeneratedText: return "AI-Generated Text"
+        case .suspiciousOpener: return "Suspicious Opener"
         }
     }
 
@@ -88,6 +90,7 @@ enum ScamPatternType: String, Codable, CaseIterable {
         case .tragicBackstory: return "heart.slash.fill"
         case .futurePromises: return "airplane.departure"
         case .aiGeneratedText: return "cpu.fill"
+        case .suspiciousOpener: return "bubble.left.fill"
         }
     }
 
@@ -110,6 +113,7 @@ enum ScamPatternType: String, Codable, CaseIterable {
         case .inconsistentDetails: return 2.0
         case .grammarScriptedResponses: return 1.5
         case .aiGeneratedText: return 3.5
+        case .suspiciousOpener: return 2.0
         }
     }
 }
