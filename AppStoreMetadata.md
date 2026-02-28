@@ -75,6 +75,9 @@ https://YOUR-GITHUB-USERNAME.github.io/lovellama-privacy/
 
 ## What's New in This Version
 
+**v1.5.1**
+Improved chat analysis — Love Llama now detects suspicious emoji-only and emoji-heavy short messages, a common "shotgun" tactic where scammers send flirty emojis to random numbers hoping someone engages. Previously these slipped through as safe — now flagged as low risk with a clear explanation.
+
 **v1.5**
 Photo verification just got a major upgrade. Every user now gets dual analysis — on-device AI detection plus Reality Defender's deepfake technology — with results shown side by side. No API key needed for photo checks anymore. You can still add your own Reality Defender key in Settings to use your own credits.
 
