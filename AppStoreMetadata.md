@@ -27,15 +27,15 @@ Love Llama is your personal AI-powered romance scam detector. Whether you're cha
 ANALYZE CONVERSATIONS
 Paste suspicious messages or scan screenshots, and Love Llama's AI engine instantly detects manipulation tactics like love bombing, urgency pressure, financial requests, isolation tactics, and more. Get a clear risk score with detailed explanations of every red flag found.
 
-VERIFY PROFILE PHOTOS
-Wonder if that profile pic is a real person or an AI-generated catfish? Upload any photo and Love Llama runs dual analysis — on-device AI detection plus Reality Defender's deepfake technology — and shows both results side by side. No API key required for photo checks.
+VERIFY PHOTOS, VIDEOS & VOICE
+Wonder if that profile pic is AI-generated? Suspicious of a video call or voice message? Upload photos, video clips, or audio files and Love Llama checks for deepfakes. Photos get dual analysis — on-device AI plus Reality Defender — shown side by side. Videos and voice clips are analyzed by Reality Defender's deepfake detection. You can also record video or voice directly in the app. No API key required.
 
 SPOT RED FLAGS WITH THE CHECKLIST
 Not sure if something feels off? Walk through our interactive red flag checklist covering financial, emotional, communication, and identity warning signs. Get an instant risk assessment based on your selections.
 
 FEATURES AT A GLANCE
 - AI-powered chat analysis with 300+ scam pattern detections
-- Built-in AI photo verification — no API key needed
+- Built-in AI photo, video & voice verification — no API key needed
 - Interactive red flag checklist with weighted scoring
 - Local pattern scanning works without internet
 - Analysis history to track and review past checks
@@ -75,6 +75,9 @@ https://YOUR-GITHUB-USERNAME.github.io/lovellama-privacy/
 
 ## What's New in This Version
 
+**v1.6**
+Media Verification is here! Love Llama now detects video and voice deepfakes — not just photos. Scammers increasingly use AI-generated video calls and cloned voices. Now you can upload or record video clips and voice messages to check for deepfakes using Reality Defender's detection API. The Photo tab has been expanded into a full Media tab with a Photo/Video/Voice picker. No API key needed.
+
 **v1.5.1**
 Improved chat analysis — Love Llama now detects suspicious emoji-only and emoji-heavy short messages, a common "shotgun" tactic where scammers send flirty emojis to random numbers hoping someone engages. Previously these slipped through as safe — now flagged as low risk with a clear explanation.
 
@@ -101,15 +104,18 @@ This app uses API keys to access third-party AI services:
 
 1. **Anthropic API Key** (for chat analysis): Users provide their own key from console.anthropic.com. Without a key, the app still performs local pattern scanning with 300+ romance scam indicators.
 
-2. **Reality Defender** (for photo verification): A built-in API key provides deepfake detection for all users automatically. Users may optionally add their own key in Settings to use their own credits instead.
+2. **Reality Defender** (for media verification): A built-in API key provides deepfake detection for photos, videos, and voice/audio for all users automatically. Users may optionally add their own key in Settings to use their own credits instead.
 
 The red flag checklist feature works entirely offline without any API key.
 
 Demo flow for testing:
 1. Open app → Accept data consent
 2. Go to "Analyze Chat" tab → Paste sample text → See local scan results
-3. Go to "Red Flags" tab → Check items → See risk assessment
-4. Go to Settings → See privacy policy, delete data option
+3. Go to "Media" tab → Select a photo → Analyze → See dual result cards
+4. Go to "Media" tab → Switch to Video → Select a video → Analyze → See RD result
+5. Go to "Media" tab → Switch to Voice → Select an audio file → Analyze → See RD result
+6. Go to "Red Flags" tab → Check items → See risk assessment
+7. Go to Settings → See privacy policy, delete data option
 
 ---
 
