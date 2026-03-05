@@ -57,19 +57,24 @@ struct RealityDefenderClient {
 
     // Step 2: Upload image data to presigned URL
     func uploadImage(data: Data, to signedUrl: String) async throws {
+        try await uploadMedia(data: data, to: signedUrl, contentType: "image/jpeg")
+    }
+
+    // Step 2 (generalized): Upload any media data to presigned URL
+    func uploadMedia(data: Data, to signedUrl: String, contentType: String) async throws {
         guard let url = URL(string: signedUrl) else {
             throw APIError(message: "Invalid upload URL")
         }
-        var request = URLRequest(url: url, timeoutInterval: 60)
+        var request = URLRequest(url: url, timeoutInterval: 120)
         request.httpMethod = "PUT"
-        request.setValue("image/jpeg", forHTTPHeaderField: "Content-Type")
+        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
         request.httpBody = data
 
         let (_, response) = try await URLSession.shared.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
-            throw APIError(message: "Failed to upload image")
+            throw APIError(message: "Failed to upload media")
         }
     }
 
@@ -143,5 +148,63 @@ struct RealityDefenderClient {
         }
 
         throw APIError(message: "Analysis timed out")
+    }
+
+    // Full flow for video: read file, upload, poll with extended timeout
+    func analyzeVideo(_ videoURL: URL, apiKey: String) async throws -> DetectionResult {
+        let videoData = try Data(contentsOf: videoURL)
+        let ext = videoURL.pathExtension.lowercased()
+        let contentType = ext == "mov" ? "video/quicktime" : "video/mp4"
+        let fileName = "lovellama_\(UUID().uuidString).\(ext.isEmpty ? "mp4" : ext)"
+
+        let (signedUrl, requestId) = try await getPresignedURL(fileName: fileName, apiKey: apiKey)
+        try await uploadMedia(data: videoData, to: signedUrl, contentType: contentType)
+
+        // Video processing takes longer — poll for up to 120 seconds (3s intervals)
+        let maxAttempts = 40
+        for attempt in 0..<maxAttempts {
+            try await Task.sleep(nanoseconds: 3_000_000_000)
+            let result = try await getResults(requestId: requestId, apiKey: apiKey)
+            if result.status != "ANALYZING" && result.status != "UNKNOWN" {
+                return result
+            }
+            if attempt == maxAttempts - 1 {
+                return result
+            }
+        }
+        throw APIError(message: "Video analysis timed out")
+    }
+
+    // Full flow for audio: read file, upload, poll with extended timeout
+    func analyzeAudio(_ audioURL: URL, apiKey: String) async throws -> DetectionResult {
+        let audioData = try Data(contentsOf: audioURL)
+        let ext = audioURL.pathExtension.lowercased()
+        let contentType: String
+        switch ext {
+        case "mp3": contentType = "audio/mpeg"
+        case "wav": contentType = "audio/wav"
+        case "m4a", "aac", "alac": contentType = "audio/mp4"
+        case "ogg": contentType = "audio/ogg"
+        case "flac": contentType = "audio/flac"
+        default: contentType = "audio/mpeg"
+        }
+        let fileName = "lovellama_\(UUID().uuidString).\(ext.isEmpty ? "m4a" : ext)"
+
+        let (signedUrl, requestId) = try await getPresignedURL(fileName: fileName, apiKey: apiKey)
+        try await uploadMedia(data: audioData, to: signedUrl, contentType: contentType)
+
+        // Audio processing — poll for up to 90 seconds (3s intervals)
+        let maxAttempts = 30
+        for attempt in 0..<maxAttempts {
+            try await Task.sleep(nanoseconds: 3_000_000_000)
+            let result = try await getResults(requestId: requestId, apiKey: apiKey)
+            if result.status != "ANALYZING" && result.status != "UNKNOWN" {
+                return result
+            }
+            if attempt == maxAttempts - 1 {
+                return result
+            }
+        }
+        throw APIError(message: "Audio analysis timed out")
     }
 }

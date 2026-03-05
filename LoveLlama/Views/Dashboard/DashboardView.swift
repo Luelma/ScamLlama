@@ -36,9 +36,9 @@ struct DashboardView: View {
                                 ) { selectedTab = 1 }
 
                                 QuickActionCard(
-                                    title: "Check Photo",
-                                    subtitle: "Real person or catfish? 🐟",
-                                    icon: "person.crop.circle.badge.questionmark",
+                                    title: "Verify Media",
+                                    subtitle: "Photos, videos & voice",
+                                    icon: "shield.lefthalf.filled",
                                     color: Color(red: 0.55, green: 0.11, blue: 0.53)
                                 ) { selectedTab = 2 }
 
@@ -144,7 +144,7 @@ struct DashboardView: View {
             HStack(spacing: 24) {
                 StatPill(value: "\(totalScans)", label: "Scans", color: .blue)
                 StatPill(value: "\(highRiskCount)", label: "High Risk", color: highRiskCount > 0 ? .red : .green)
-                StatPill(value: "\(photoChecks.count)", label: "Photos", color: .purple)
+                StatPill(value: "\(photoChecks.count)", label: "Media", color: .purple)
             }
         }
         .padding()

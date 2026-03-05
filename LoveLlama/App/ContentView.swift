@@ -17,9 +17,9 @@ struct ContentView: View {
                 }
                 .tag(1)
 
-            PhotoVerificationView()
+            MediaVerificationView()
                 .tabItem {
-                    Label("Photo", systemImage: "person.crop.circle.badge.questionmark")
+                    Label("Media", systemImage: "shield.lefthalf.filled")
                 }
                 .tag(2)
 
