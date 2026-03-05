@@ -127,7 +127,7 @@ struct ConversationDetailView: View {
     }
 }
 
-// MARK: - Photo Check Detail
+// MARK: - Photo/Media Check Detail
 
 struct PhotoCheckDetailView: View {
     let photoCheck: PhotoCheck
@@ -135,19 +135,8 @@ struct PhotoCheckDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                // Image
-                if let data = photoCheck.imageData, let uiImage = UIImage(data: data) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 200)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(photoCheck.riskLevel.color, lineWidth: 3)
-                        )
-                        .padding(.top)
-                }
+                // Media preview
+                mediaPreview
 
                 // Status
                 VStack(spacing: 12) {
@@ -174,13 +163,31 @@ struct PhotoCheckDetailView: View {
                         .font(.caption)
                         .foregroundStyle(.tertiary)
 
-                    if photoCheck.isLocalOnly {
-                        Label("On-Device Analysis", systemImage: "iphone")
+                    // Media type badge
+                    HStack(spacing: 8) {
+                        if photoCheck.isLocalOnly {
+                            Label("On-Device Analysis", systemImage: "iphone")
+                                .font(.caption)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(Color.purple.opacity(0.1))
+                                .clipShape(Capsule())
+                        }
+
+                        if photoCheck.parsedMediaType != .photo {
+                            Label(photoCheck.parsedMediaType.label, systemImage: photoCheck.parsedMediaType.icon)
+                                .font(.caption)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(Color.indigo.opacity(0.1))
+                                .clipShape(Capsule())
+                        }
+                    }
+
+                    if let duration = photoCheck.mediaDuration {
+                        Text("Duration: \(formatDuration(duration))")
                             .font(.caption)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(Color.purple.opacity(0.1))
-                            .clipShape(Capsule())
+                            .foregroundStyle(.secondary)
                     }
                 }
 
@@ -213,8 +220,67 @@ struct PhotoCheckDetailView: View {
                 Spacer(minLength: 40)
             }
         }
-        .navigationTitle("Photo Results")
+        .navigationTitle(navTitle)
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    @ViewBuilder
+    private var mediaPreview: some View {
+        switch photoCheck.parsedMediaType {
+        case .photo:
+            if let data = photoCheck.imageData, let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 200)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(photoCheck.riskLevel.color, lineWidth: 3)
+                    )
+                    .padding(.top)
+            }
+        case .video:
+            if let data = photoCheck.imageData, let uiImage = UIImage(data: data) {
+                ZStack {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxHeight: 200)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(photoCheck.riskLevel.color, lineWidth: 3)
+                        )
+                    Image(systemName: "play.circle.fill")
+                        .font(.system(size: 44))
+                        .foregroundStyle(.white.opacity(0.9))
+                        .shadow(radius: 4)
+                }
+                .padding(.top)
+            }
+        case .audio:
+            VStack(spacing: 12) {
+                Image(systemName: "waveform.circle.fill")
+                    .font(.system(size: 56))
+                    .foregroundStyle(.purple)
+                if let fileName = photoCheck.mediaFileName {
+                    Text(fileName)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+            .padding(.top)
+        }
+    }
+
+    private var navTitle: String {
+        switch photoCheck.parsedMediaType {
+        case .photo: return "Photo Results"
+        case .video: return "Video Results"
+        case .audio: return "Voice Results"
+        }
     }
 
     private var statusIcon: String {
@@ -224,6 +290,12 @@ struct PhotoCheckDetailView: View {
         case "SUSPICIOUS": return "exclamationmark.triangle.fill"
         default: return "questionmark.circle.fill"
         }
+    }
+
+    private func formatDuration(_ seconds: Double) -> String {
+        let mins = Int(seconds) / 60
+        let secs = Int(seconds) % 60
+        return String(format: "%d:%02d", mins, secs)
     }
 }
 

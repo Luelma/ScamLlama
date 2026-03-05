@@ -93,7 +93,7 @@ enum HistoryFilter: String, CaseIterable, Identifiable {
         switch self {
         case .all: return "All"
         case .chats: return "Chat Analyses"
-        case .photos: return "Photo Checks"
+        case .photos: return "Media Checks"
         case .checklists: return "Checklists"
         }
     }
@@ -102,7 +102,7 @@ enum HistoryFilter: String, CaseIterable, Identifiable {
         switch self {
         case .all: return "tray.full"
         case .chats: return "text.bubble"
-        case .photos: return "person.crop.circle.badge.questionmark"
+        case .photos: return "shield.lefthalf.filled"
         case .checklists: return "checklist"
         }
     }
@@ -140,7 +140,12 @@ enum HistoryItem: Identifiable, Hashable {
     var title: String {
         switch self {
         case .conversation(let c): return c.contactName ?? "Chat Analysis"
-        case .photo: return "Photo Check"
+        case .photo(let p):
+            switch p.parsedMediaType {
+            case .photo: return "Photo Check"
+            case .video: return p.mediaFileName ?? "Video Check"
+            case .audio: return p.mediaFileName ?? "Voice Check"
+            }
         case .checklist(let s): return s.contactName ?? "Checklist"
         }
     }
@@ -159,7 +164,12 @@ enum HistoryItem: Identifiable, Hashable {
     var icon: String {
         switch self {
         case .conversation: return "text.bubble.fill"
-        case .photo: return "person.crop.circle.badge.questionmark"
+        case .photo(let p):
+            switch p.parsedMediaType {
+            case .photo: return "person.crop.circle.badge.questionmark"
+            case .video: return "video.fill"
+            case .audio: return "mic.fill"
+            }
         case .checklist: return "checklist"
         }
     }
@@ -167,7 +177,7 @@ enum HistoryItem: Identifiable, Hashable {
     var typeLabel: String {
         switch self {
         case .conversation: return "Chat"
-        case .photo: return "Photo"
+        case .photo(let p): return p.parsedMediaType.label
         case .checklist: return "Checklist"
         }
     }

@@ -121,3 +121,39 @@ enum ScamPatternType: String, Codable, CaseIterable {
 enum AnalysisSource: String, Codable {
     case paste, screenshot
 }
+
+enum MediaType: String, Codable, CaseIterable {
+    case photo, video, audio
+
+    var label: String {
+        switch self {
+        case .photo: return "Photo"
+        case .video: return "Video"
+        case .audio: return "Voice"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .photo: return "person.crop.circle.badge.questionmark"
+        case .video: return "video.fill"
+        case .audio: return "mic.fill"
+        }
+    }
+
+    var maxFileSize: Int {
+        switch self {
+        case .photo: return 20_000_000 // 20MB
+        case .video: return 250_000_000 // 250MB
+        case .audio: return 20_000_000 // 20MB
+        }
+    }
+
+    var maxFileSizeLabel: String {
+        switch self {
+        case .photo: return "20 MB"
+        case .video: return "250 MB"
+        case .audio: return "20 MB"
+        }
+    }
+}

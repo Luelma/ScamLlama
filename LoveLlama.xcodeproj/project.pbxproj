@@ -22,7 +22,7 @@
 		A10000013 /* RiskGaugeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000013 /* RiskGaugeView.swift */; };
 		A10000014 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000014 /* DashboardView.swift */; };
 		A10000015 /* ChatAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000015 /* ChatAnalysisView.swift */; };
-		A10000016 /* PhotoVerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000016 /* PhotoVerificationView.swift */; };
+		A10000016 /* MediaVerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000016 /* MediaVerificationView.swift */; };
 		A10000017 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000017 /* SettingsView.swift */; };
 		A10000018 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000018 /* Constants.swift */; };
 		A10000019 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000019 /* Extensions.swift */; };
@@ -52,6 +52,11 @@
 		A10000041 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000041 /* PrivacyPolicyView.swift */; };
 		A10000043 /* ConversationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000043 /* ConversationContext.swift */; };
 		A10000044 /* EmbeddedKeyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000044 /* EmbeddedKeyProvider.swift */; };
+		A10000045 /* MediaDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000045 /* MediaDetector.swift */; };
+		A10000046 /* MediaVerificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000046 /* MediaVerificationViewModel.swift */; };
+		A10000047 /* AudioRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000047 /* AudioRecorderView.swift */; };
+		A10000048 /* VideoRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000048 /* VideoRecorderView.swift */; };
+		A10000049 /* MediaResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000049 /* MediaResultView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,7 +75,7 @@
 		A20000013 /* RiskGaugeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiskGaugeView.swift; sourceTree = "<group>"; };
 		A20000014 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		A20000015 /* ChatAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAnalysisView.swift; sourceTree = "<group>"; };
-		A20000016 /* PhotoVerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoVerificationView.swift; sourceTree = "<group>"; };
+		A20000016 /* MediaVerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaVerificationView.swift; sourceTree = "<group>"; };
 		A20000017 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A20000018 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		A20000019 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -100,6 +105,11 @@
 		A20000041 /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		A20000043 /* ConversationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationContext.swift; sourceTree = "<group>"; };
 		A20000044 /* EmbeddedKeyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedKeyProvider.swift; sourceTree = "<group>"; };
+		A20000045 /* MediaDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDetector.swift; sourceTree = "<group>"; };
+		A20000046 /* MediaVerificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaVerificationViewModel.swift; sourceTree = "<group>"; };
+		A20000047 /* AudioRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderView.swift; sourceTree = "<group>"; };
+		A20000048 /* VideoRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoRecorderView.swift; sourceTree = "<group>"; };
+		A20000049 /* MediaResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaResultView.swift; sourceTree = "<group>"; };
 		A30000001 /* LoveLlama.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LoveLlama.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -174,6 +184,7 @@
 				A20000033 /* AIImageDetector.swift */,
 				A20000040 /* ConsentManager.swift */,
 				A20000044 /* EmbeddedKeyProvider.swift */,
+				A20000045 /* MediaDetector.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -185,6 +196,7 @@
 				A20000026 /* ChatAnalysisViewModel.swift */,
 				A20000027 /* SettingsViewModel.swift */,
 				A20000034 /* PhotoVerificationViewModel.swift */,
+				A20000046 /* MediaVerificationViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -242,8 +254,11 @@
 		A50000012 /* PhotoVerification */ = {
 			isa = PBXGroup;
 			children = (
-				A20000016 /* PhotoVerificationView.swift */,
+				A20000016 /* MediaVerificationView.swift */,
 				A20000035 /* PhotoResultView.swift */,
+				A20000047 /* AudioRecorderView.swift */,
+				A20000048 /* VideoRecorderView.swift */,
+				A20000049 /* MediaResultView.swift */,
 			);
 			path = PhotoVerification;
 			sourceTree = "<group>";
@@ -381,7 +396,7 @@
 				A10000013 /* RiskGaugeView.swift in Sources */,
 				A10000014 /* DashboardView.swift in Sources */,
 				A10000015 /* ChatAnalysisView.swift in Sources */,
-				A10000016 /* PhotoVerificationView.swift in Sources */,
+				A10000016 /* MediaVerificationView.swift in Sources */,
 				A10000017 /* SettingsView.swift in Sources */,
 				A10000018 /* Constants.swift in Sources */,
 				A10000019 /* Extensions.swift in Sources */,
@@ -407,6 +422,11 @@
 				A10000040 /* ConsentManager.swift in Sources */,
 				A10000041 /* PrivacyPolicyView.swift in Sources */,
 				A10000044 /* EmbeddedKeyProvider.swift in Sources */,
+				A10000045 /* MediaDetector.swift in Sources */,
+				A10000046 /* MediaVerificationViewModel.swift in Sources */,
+				A10000047 /* AudioRecorderView.swift in Sources */,
+				A10000048 /* VideoRecorderView.swift in Sources */,
+				A10000049 /* MediaResultView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
