@@ -97,7 +97,10 @@ class AIImageDetector {
                 score: apiResult.score,
                 requestId: apiResult.requestId
             )
-            let analysis = PhotoAnalysisResult(localResult: localDetection, rdResult: rdDetection)
+
+            // Adjust local result to incorporate RD findings so they don't contradict
+            let adjustedLocal = adjustLocalResult(localDetection, localScan: localResult, rdResult: rdDetection)
+            let analysis = PhotoAnalysisResult(localResult: adjustedLocal, rdResult: rdDetection)
             state = .complete(result: analysis)
         } catch {
             // RD failed — show local result + error message for RD card
@@ -112,6 +115,42 @@ class AIImageDetector {
     func reset() {
         state = .idle
         localScanResult = nil
+    }
+
+    /// Blend Reality Defender score into the local result so the two cards don't wildly contradict.
+    /// RD score (0-100) is treated as an authoritative signal that pulls the local score toward it.
+    private func adjustLocalResult(_ local: PhotoDetectionResult, localScan: LocalImageScanResult, rdResult: PhotoDetectionResult) -> PhotoDetectionResult {
+        guard let rdScore = rdResult.score else { return local }
+
+        let localScore = localScan.overallScore  // 0.0 - 1.0
+        let rdNormalized = rdScore / 100.0       // normalize to 0.0 - 1.0
+
+        // Weighted blend: RD carries 60% weight since it's a purpose-built deepfake detector
+        let blendedScore = localScore * 0.4 + rdNormalized * 0.6
+        let clampedScore = min(1.0, max(0.0, blendedScore))
+
+        // Derive status from blended score using the same thresholds as LocalImageAnalyzer
+        let status: String
+        switch clampedScore {
+        case ..<0.25: status = "AUTHENTIC"
+        case 0.25..<0.50: status = "SUSPICIOUS"
+        case 0.50..<0.75: status = "SUSPICIOUS"
+        default: status = "FAKE"
+        }
+
+        // Append a note to the flags explaining the adjustment
+        var flags = local.suspicionFlags ?? []
+        if abs(rdNormalized - localScore) > 0.3 {
+            flags.append("Score adjusted using Reality Defender analysis")
+        }
+
+        return PhotoDetectionResult(
+            status: status,
+            score: clampedScore * 100,
+            requestId: local.requestId,
+            isLocalOnly: false,
+            suspicionFlags: flags
+        )
     }
 
     private func buildLocalOnlyResult(from localResult: LocalImageScanResult) -> PhotoDetectionResult {
