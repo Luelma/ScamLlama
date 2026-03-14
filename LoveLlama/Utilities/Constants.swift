@@ -6,4 +6,5 @@ enum Constants {
     static let apiKeyKeychainKey = "com.lovellama.anthropic-api-key"
     static let rdAPIKeyKeychainKey = "com.lovellama.realitydefender-api-key"
     static let rdAPIBaseURL = "https://api.prd.realitydefender.xyz/api"
+    static let scamAIAPIBaseURL = "https://api.scam.ai/api/defence/ai-image-detection"
 }

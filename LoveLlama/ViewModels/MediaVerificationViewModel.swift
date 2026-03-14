@@ -47,7 +47,7 @@ class MediaVerificationViewModel {
             switch photoDetector.state {
             case .scanning: return "Scanning image locally..."
             case .uploading: return "Uploading image..."
-            case .analyzing: return "Analyzing with Reality Defender..."
+            case .analyzing: return "Analyzing with cloud services..."
             default: return nil
             }
         case .video:

@@ -2,29 +2,45 @@ import Foundation
 import UIKit
 import Observation
 
-/// Combined result containing both local and Reality Defender analysis.
+/// Combined result containing local, Reality Defender, and Scam.ai analysis.
 struct PhotoAnalysisResult: Equatable {
     var localResult: PhotoDetectionResult
     var rdResult: PhotoDetectionResult?
+    var scamAIResult: PhotoDetectionResult?
     /// Whether RD analysis is still in progress (local finished, RD pending).
     var rdLoading: Bool = false
+    /// Whether Scam.ai analysis is still in progress.
+    var scamAILoading: Bool = false
     /// If RD failed, a user-facing reason.
     var rdError: String? = nil
+    /// If Scam.ai failed, a user-facing reason.
+    var scamAIError: String? = nil
 
     /// The higher-risk result drives the overall verdict.
     var overallResult: PhotoDetectionResult {
-        guard let rd = rdResult else { return localResult }
         let order: [RiskLevel] = [.low, .medium, .high, .critical]
-        let rdIndex = order.firstIndex(of: rd.riskLevel) ?? 0
-        let localIndex = order.firstIndex(of: localResult.riskLevel) ?? 0
-        return rdIndex >= localIndex ? rd : localResult
+        var best = localResult
+        var bestIndex = order.firstIndex(of: best.riskLevel) ?? 0
+
+        if let rd = rdResult {
+            let rdIndex = order.firstIndex(of: rd.riskLevel) ?? 0
+            if rdIndex >= bestIndex { best = rd; bestIndex = rdIndex }
+        }
+        if let scam = scamAIResult {
+            let scamIndex = order.firstIndex(of: scam.riskLevel) ?? 0
+            if scamIndex >= bestIndex { best = scam; bestIndex = scamIndex }
+        }
+        return best
     }
 
     static func == (lhs: PhotoAnalysisResult, rhs: PhotoAnalysisResult) -> Bool {
         lhs.localResult.status == rhs.localResult.status &&
         lhs.rdResult?.status == rhs.rdResult?.status &&
+        lhs.scamAIResult?.status == rhs.scamAIResult?.status &&
         lhs.rdLoading == rhs.rdLoading &&
-        lhs.rdError == rhs.rdError
+        lhs.scamAILoading == rhs.scamAILoading &&
+        lhs.rdError == rhs.rdError &&
+        lhs.scamAIError == rhs.scamAIError
     }
 }
 
@@ -55,7 +71,8 @@ class AIImageDetector {
     var state: State = .idle
     var localScanResult: LocalImageScanResult?
 
-    private let client = RealityDefenderClient()
+    private let rdClient = RealityDefenderClient()
+    private let scamAIClient = ScamAIClient()
     private let localAnalyzer = LocalImageAnalyzer()
 
     func analyze(image: UIImage) async {
@@ -65,7 +82,7 @@ class AIImageDetector {
         localScanResult = localResult
         let localDetection = buildLocalOnlyResult(from: localResult)
 
-        // Step 2: Check consent before attempting RD
+        // Step 2: Check consent before attempting cloud APIs
         guard ConsentManager.shared.hasConsented,
               ConsentManager.shared.hasConsentedPhotoAPI else {
             let analysis = PhotoAnalysisResult(localResult: localDetection)
@@ -73,43 +90,84 @@ class AIImageDetector {
             return
         }
 
-        // Step 3: Resolve API key — user key first, then embedded key
-        let userKey = await RDKeyManager.shared.getKey()
-        let apiKey = userKey ?? EmbeddedKeyProvider.rdAPIKey()
+        // Step 3: Resolve API keys
+        let rdUserKey = await RDKeyManager.shared.getKey()
+        let rdAPIKey = rdUserKey ?? EmbeddedKeyProvider.rdAPIKey()
+        let scamAIAPIKey = EmbeddedKeyProvider.scamAIAPIKey()
 
-        guard !apiKey.isEmpty else {
+        let hasRD = !rdAPIKey.isEmpty
+        let hasScamAI = !scamAIAPIKey.isEmpty
+
+        guard hasRD || hasScamAI else {
             let analysis = PhotoAnalysisResult(localResult: localDetection)
             state = .complete(result: analysis)
             return
         }
 
-        // Show local result immediately with RD loading indicator
-        state = .complete(result: PhotoAnalysisResult(localResult: localDetection, rdLoading: true))
+        // Show local result immediately with cloud loading indicators
+        state = .complete(result: PhotoAnalysisResult(
+            localResult: localDetection,
+            rdLoading: hasRD,
+            scamAILoading: hasScamAI
+        ))
 
-        // Step 4: Try Reality Defender API
-        state = .uploading
+        // Step 4: Run cloud APIs in parallel
+        state = .analyzing
 
-        do {
-            state = .analyzing
-            let apiResult = try await client.analyzeImage(image, apiKey: apiKey)
-            let rdDetection = PhotoDetectionResult(
-                status: apiResult.status,
-                score: apiResult.score,
-                requestId: apiResult.requestId
-            )
-
-            // Adjust local result to incorporate RD findings so they don't contradict
-            let adjustedLocal = adjustLocalResult(localDetection, localScan: localResult, rdResult: rdDetection)
-            let analysis = PhotoAnalysisResult(localResult: adjustedLocal, rdResult: rdDetection)
-            state = .complete(result: analysis)
-        } catch {
-            // RD failed — show local result + error message for RD card
-            let analysis = PhotoAnalysisResult(
-                localResult: localDetection,
-                rdError: "Reality Defender analysis unavailable"
-            )
-            state = .complete(result: analysis)
+        // Reality Defender task
+        let rdTask: Task<PhotoDetectionResult?, Never> = Task {
+            guard hasRD else { return nil }
+            do {
+                let apiResult = try await rdClient.analyzeImage(image, apiKey: rdAPIKey)
+                return PhotoDetectionResult(
+                    status: apiResult.status,
+                    score: apiResult.score,
+                    requestId: apiResult.requestId
+                )
+            } catch {
+                return nil
+            }
         }
+
+        // Scam.ai task
+        let scamTask: Task<(result: PhotoDetectionResult?, error: String?), Never> = Task {
+            guard hasScamAI else { return (nil, nil) }
+            do {
+                let apiResult = try await scamAIClient.analyzeImage(image, apiKey: scamAIAPIKey)
+                let score = apiResult.confidenceScore * 100  // normalize to 0-100
+                let status: String
+                if apiResult.likelyAIGenerated {
+                    status = score >= 75 ? "FAKE" : "SUSPICIOUS"
+                } else {
+                    status = score >= 50 ? "SUSPICIOUS" : "AUTHENTIC"
+                }
+                return (PhotoDetectionResult(
+                    status: status,
+                    score: score,
+                    requestId: ""
+                ), nil)
+            } catch {
+                return (nil, "Scam.ai analysis unavailable")
+            }
+        }
+
+        let rdDetection = await rdTask.value
+        let scamResult = await scamTask.value
+
+        // Adjust local result to incorporate RD findings if available
+        var adjustedLocal = localDetection
+        if let rd = rdDetection {
+            adjustedLocal = adjustLocalResult(localDetection, localScan: localResult, rdResult: rd)
+        }
+
+        let analysis = PhotoAnalysisResult(
+            localResult: adjustedLocal,
+            rdResult: rdDetection,
+            scamAIResult: scamResult.result,
+            rdError: rdDetection == nil && hasRD ? "Reality Defender analysis unavailable" : nil,
+            scamAIError: scamResult.error
+        )
+        state = .complete(result: analysis)
     }
 
     func reset() {

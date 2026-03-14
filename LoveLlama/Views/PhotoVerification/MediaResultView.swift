@@ -8,7 +8,7 @@ struct MediaResultView: View {
     var onSave: (() -> Void)?
     @State private var saved = false
 
-    private var result: PhotoDetectionResult { analysis.rdResult }
+    private var result: PhotoDetectionResult { analysis.overallResult }
 
     var body: some View {
         ScrollView {
@@ -30,8 +30,23 @@ struct MediaResultView: View {
                     RiskBadgeView(riskLevel: result.riskLevel)
                 }
 
-                // Reality Defender result card
-                rdResultCard
+                // Analysis cards
+                VStack(spacing: 12) {
+                    // Reality Defender result card
+                    rdResultCard
+
+                    // Scam.ai card (video only)
+                    if analysis.mediaType == .video {
+                        if analysis.scamAILoading {
+                            scamAILoadingCard
+                        } else if let scamError = analysis.scamAIError {
+                            scamAIErrorCard(message: scamError)
+                        } else if let scamResult = analysis.scamAIResult {
+                            scamAIResultCard(result: scamResult)
+                        }
+                    }
+                }
+                .padding(.horizontal)
 
                 // Explanation
                 Text(result.explanation)
@@ -138,15 +153,90 @@ struct MediaResultView: View {
     }
 
     private var rdResultCard: some View {
+        analysisCard(
+            title: "Reality Defender",
+            icon: "checkmark.seal.fill",
+            color: .indigo,
+            result: analysis.rdResult
+        )
+    }
+
+    private func scamAIResultCard(result: PhotoDetectionResult) -> some View {
+        analysisCard(
+            title: "Scam.ai",
+            icon: "eye.trianglebadge.exclamationmark",
+            color: .teal,
+            result: result
+        )
+    }
+
+    private var scamAILoadingCard: some View {
         VStack(spacing: 10) {
             HStack {
-                Image(systemName: "checkmark.seal.fill")
-                    .foregroundStyle(.indigo)
-                Text("Reality Defender")
+                Image(systemName: "eye.trianglebadge.exclamationmark")
+                    .foregroundStyle(.teal)
+                Text("Scam.ai")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 Spacer()
-                Image(systemName: statusIcon)
+            }
+            Divider()
+            HStack(spacing: 12) {
+                ProgressView()
+                Text("Analyzing...")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+        }
+        .padding()
+        .background(Color.teal.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(Color.teal.opacity(0.2), lineWidth: 1)
+        )
+    }
+
+    private func scamAIErrorCard(message: String) -> some View {
+        VStack(spacing: 10) {
+            HStack {
+                Image(systemName: "eye.trianglebadge.exclamationmark")
+                    .foregroundStyle(.teal)
+                Text("Scam.ai")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Spacer()
+                Image(systemName: "exclamationmark.circle")
+                    .foregroundStyle(.secondary)
+            }
+            Divider()
+            HStack {
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+        }
+        .padding()
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
+        )
+    }
+
+    private func analysisCard(title: String, icon: String, color: Color, result: PhotoDetectionResult) -> some View {
+        VStack(spacing: 10) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundStyle(color)
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Spacer()
+                Image(systemName: cardStatusIcon(for: result))
                     .foregroundStyle(result.riskLevel.color)
             }
 
@@ -170,13 +260,21 @@ struct MediaResultView: View {
             }
         }
         .padding()
-        .background(Color.indigo.opacity(0.06))
+        .background(color.opacity(0.06))
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .stroke(Color.indigo.opacity(0.2), lineWidth: 1)
+                .stroke(color.opacity(0.2), lineWidth: 1)
         )
-        .padding(.horizontal)
+    }
+
+    private func cardStatusIcon(for result: PhotoDetectionResult) -> String {
+        switch result.status {
+        case "AUTHENTIC": return "checkmark.shield.fill"
+        case "FAKE": return "xmark.shield.fill"
+        case "SUSPICIOUS": return "exclamationmark.triangle.fill"
+        default: return "questionmark.circle.fill"
+        }
     }
 
     // MARK: - Helpers
