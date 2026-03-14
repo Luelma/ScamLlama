@@ -51,9 +51,9 @@ struct PhotoResultView: View {
 
                     // Reality Defender card
                     if analysis.rdLoading {
-                        rdLoadingCard()
+                        cloudLoadingCard(title: "Reality Defender", icon: "checkmark.seal.fill", color: .indigo)
                     } else if let rdError = analysis.rdError {
-                        rdErrorCard(message: rdError)
+                        cloudErrorCard(title: "Reality Defender", icon: "checkmark.seal.fill", color: .indigo, message: rdError)
                     } else if let rdResult = analysis.rdResult {
                         analysisCard(
                             title: "Reality Defender",
@@ -62,7 +62,23 @@ struct PhotoResultView: View {
                             result: rdResult
                         )
                     } else {
-                        rdUnavailableCard()
+                        cloudErrorCard(title: "Reality Defender", icon: "checkmark.seal.fill", color: .indigo, message: "Photo sharing consent required for Reality Defender analysis")
+                    }
+
+                    // Scam.ai card
+                    if analysis.scamAILoading {
+                        cloudLoadingCard(title: "Scam.ai", icon: "eye.trianglebadge.exclamationmark", color: .teal)
+                    } else if let scamError = analysis.scamAIError {
+                        cloudErrorCard(title: "Scam.ai", icon: "eye.trianglebadge.exclamationmark", color: .teal, message: scamError)
+                    } else if let scamResult = analysis.scamAIResult {
+                        analysisCard(
+                            title: "Scam.ai",
+                            icon: "eye.trianglebadge.exclamationmark",
+                            color: .teal,
+                            result: scamResult
+                        )
+                    } else {
+                        cloudErrorCard(title: "Scam.ai", icon: "eye.trianglebadge.exclamationmark", color: .teal, message: "Photo sharing consent required for Scam.ai analysis")
                     }
                 }
                 .padding(.horizontal)
@@ -178,12 +194,12 @@ struct PhotoResultView: View {
         )
     }
 
-    private func rdLoadingCard() -> some View {
+    private func cloudLoadingCard(title: String, icon: String, color: Color) -> some View {
         VStack(spacing: 10) {
             HStack {
-                Image(systemName: "checkmark.seal.fill")
-                    .foregroundStyle(.indigo)
-                Text("Reality Defender")
+                Image(systemName: icon)
+                    .foregroundStyle(color)
+                Text(title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 Spacer()
@@ -200,20 +216,20 @@ struct PhotoResultView: View {
             }
         }
         .padding()
-        .background(Color.indigo.opacity(0.06))
+        .background(color.opacity(0.06))
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .stroke(Color.indigo.opacity(0.2), lineWidth: 1)
+                .stroke(color.opacity(0.2), lineWidth: 1)
         )
     }
 
-    private func rdErrorCard(message: String) -> some View {
+    private func cloudErrorCard(title: String, icon: String, color: Color, message: String) -> some View {
         VStack(spacing: 10) {
             HStack {
-                Image(systemName: "checkmark.seal.fill")
-                    .foregroundStyle(.indigo)
-                Text("Reality Defender")
+                Image(systemName: icon)
+                    .foregroundStyle(color)
+                Text(title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 Spacer()
@@ -237,10 +253,6 @@ struct PhotoResultView: View {
             RoundedRectangle(cornerRadius: 14)
                 .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
         )
-    }
-
-    private func rdUnavailableCard() -> some View {
-        rdErrorCard(message: "Photo sharing consent required for Reality Defender analysis")
     }
 
     // MARK: - Helpers

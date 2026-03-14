@@ -41,6 +41,7 @@
 		A10000030 /* PatternCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000030 /* PatternCardView.swift */; };
 		A10000031 /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000031 /* OCRService.swift */; };
 		A10000032 /* RealityDefenderClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000032 /* RealityDefenderClient.swift */; };
+		A10000050 /* ScamAIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000050 /* ScamAIClient.swift */; };
 		A10000033 /* AIImageDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000033 /* AIImageDetector.swift */; };
 		A10000034 /* PhotoVerificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000034 /* PhotoVerificationViewModel.swift */; };
 		A10000035 /* PhotoResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000035 /* PhotoResultView.swift */; };
@@ -94,6 +95,7 @@
 		A20000030 /* PatternCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternCardView.swift; sourceTree = "<group>"; };
 		A20000031 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
 		A20000032 /* RealityDefenderClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealityDefenderClient.swift; sourceTree = "<group>"; };
+		A20000050 /* ScamAIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScamAIClient.swift; sourceTree = "<group>"; };
 		A20000033 /* AIImageDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIImageDetector.swift; sourceTree = "<group>"; };
 		A20000034 /* PhotoVerificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoVerificationViewModel.swift; sourceTree = "<group>"; };
 		A20000035 /* PhotoResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoResultView.swift; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 				A20000025 /* ScamAnalysisEngine.swift */,
 				A20000031 /* OCRService.swift */,
 				A20000032 /* RealityDefenderClient.swift */,
+				A20000050 /* ScamAIClient.swift */,
 				A20000033 /* AIImageDetector.swift */,
 				A20000040 /* ConsentManager.swift */,
 				A20000044 /* EmbeddedKeyProvider.swift */,
@@ -413,6 +416,7 @@
 				A10000030 /* PatternCardView.swift in Sources */,
 				A10000031 /* OCRService.swift in Sources */,
 				A10000032 /* RealityDefenderClient.swift in Sources */,
+				A10000050 /* ScamAIClient.swift in Sources */,
 				A10000033 /* AIImageDetector.swift in Sources */,
 				A10000034 /* PhotoVerificationViewModel.swift in Sources */,
 				A10000035 /* PhotoResultView.swift in Sources */,
