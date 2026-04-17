@@ -1,0 +1,291 @@
+{
+  "items": [
+    {
+      "id": "contact_unsolicited",
+      "title": "They contacted you first (unsolicited)",
+      "description": "Most scams begin with unsolicited contact — a text, email, call, or social media message you didn't expect. Legitimate companies rarely cold-contact individuals with urgent requests.",
+      "weight": 3.0,
+      "category": "Initial Contact"
+    },
+    {
+      "id": "contact_unknown_number",
+      "title": "Message from unknown number or email",
+      "description": "Scam messages often come from unknown numbers, unfamiliar email addresses, or addresses that closely mimic real companies (e.g., support@amaz0n.com).",
+      "weight": 2.0,
+      "category": "Initial Contact"
+    },
+    {
+      "id": "contact_claims_authority",
+      "title": "Claims to be from a bank, government agency, or tech company",
+      "description": "Scammers impersonate trusted organizations (IRS, banks, Microsoft, etc.) to create urgency and authority. Real agencies send official letters first and never demand immediate payment by phone or text.",
+      "weight": 4.0,
+      "category": "Initial Contact"
+    },
+    {
+      "id": "contact_generic_greeting",
+      "title": "Uses generic greeting ('Dear Sir/Madam', 'Dear Customer')",
+      "description": "Mass-distributed scam messages use generic greetings because they're sent to thousands of people. Legitimate communications from your bank or service providers use your name.",
+      "weight": 2.0,
+      "category": "Initial Contact"
+    },
+    {
+      "id": "contact_random_platform",
+      "title": "Contacted you on an unexpected platform",
+      "description": "Receiving a message about your bank account on WhatsApp, or a job offer via Instagram DM, is unusual. Legitimate organizations communicate through their official channels.",
+      "weight": 3.0,
+      "category": "Initial Contact"
+    },
+    {
+      "id": "urgency_act_now",
+      "title": "Creates urgency ('act now', 'limited time', 'expires today')",
+      "description": "Scammers create artificial urgency to prevent you from thinking clearly, researching, or consulting others. Legitimate offers and communications give you time to decide.",
+      "weight": 4.0,
+      "category": "Pressure Tactics"
+    },
+    {
+      "id": "urgency_account_threat",
+      "title": "Threatens account suspension or closure",
+      "description": "Claims your account will be suspended, locked, or deleted unless you act immediately. Real companies don't threaten immediate account closure via text or unsolicited calls.",
+      "weight": 4.0,
+      "category": "Pressure Tactics"
+    },
+    {
+      "id": "urgency_legal_threat",
+      "title": "Threatens arrest, lawsuit, or legal action",
+      "description": "Scammers threaten arrest warrants, lawsuits, or criminal charges to create fear. Real legal proceedings are served formally — law enforcement does not call to demand payment.",
+      "weight": 5.0,
+      "category": "Pressure Tactics"
+    },
+    {
+      "id": "urgency_dont_tell",
+      "title": "Tells you not to tell anyone or consult others",
+      "description": "Scammers isolate you from people who might recognize the scam. They say 'don't discuss this with anyone' or 'this is confidential.' Legitimate transactions don't require secrecy.",
+      "weight": 5.0,
+      "category": "Pressure Tactics"
+    },
+    {
+      "id": "urgency_emotional_pressure",
+      "title": "Uses emotional manipulation (guilt, fear, sympathy)",
+      "description": "Appeals to emotion — sick children, dying relatives, desperate circumstances — to bypass your rational judgment. Scammers weaponize your empathy.",
+      "weight": 4.0,
+      "category": "Pressure Tactics"
+    },
+    {
+      "id": "urgency_stay_on_phone",
+      "title": "Insists you stay on the phone while making payment",
+      "description": "Scammers keep you on the line to prevent you from hanging up and verifying their claims. This is a hallmark of tech support scams and impersonation scams.",
+      "weight": 5.0,
+      "category": "Pressure Tactics"
+    },
+    {
+      "id": "money_upfront_fee",
+      "title": "Requires upfront payment to receive something",
+      "description": "You must pay a fee, tax, or charge before receiving a prize, inheritance, loan, or job. Legitimate prizes never require payment, and employers never charge you to start a job.",
+      "weight": 5.0,
+      "category": "Financial Red Flags"
+    },
+    {
+      "id": "money_gift_cards",
+      "title": "Asks for payment via gift cards",
+      "description": "No legitimate business, government agency, or organization accepts payment via gift cards. This is one of the strongest scam indicators — gift cards are untraceable and irreversible.",
+      "weight": 5.0,
+      "category": "Financial Red Flags"
+    },
+    {
+      "id": "money_crypto",
+      "title": "Asks for payment in cryptocurrency",
+      "description": "Demands for crypto payment are a major red flag — crypto transactions are irreversible and nearly impossible to trace. Legitimate businesses offer standard payment methods.",
+      "weight": 5.0,
+      "category": "Financial Red Flags"
+    },
+    {
+      "id": "money_wire_transfer",
+      "title": "Asks for wire transfer or money order",
+      "description": "Wire transfers (Western Union, MoneyGram) cannot be reversed once sent. Scammers prefer these because the money is gone immediately with no way to recover it.",
+      "weight": 5.0,
+      "category": "Financial Red Flags"
+    },
+    {
+      "id": "money_unusual_method",
+      "title": "Insists on unusual payment method",
+      "description": "Won't accept credit cards or standard bank transfers, insisting instead on payment apps, prepaid debit cards, or other methods that are hard to reverse or trace.",
+      "weight": 4.0,
+      "category": "Financial Red Flags"
+    },
+    {
+      "id": "money_escalating",
+      "title": "Payment requests are escalating",
+      "description": "Started with a small amount and now they want more — additional fees, taxes, or 'complications' that require further payment. This pattern never ends.",
+      "weight": 5.0,
+      "category": "Financial Red Flags"
+    },
+    {
+      "id": "money_overpayment",
+      "title": "Sent you too much money and wants some back",
+      "description": "Overpayment scams send fake checks or 'accidental' payments, then ask you to return the difference. The original payment bounces and you lose the money you sent.",
+      "weight": 5.0,
+      "category": "Financial Red Flags"
+    },
+    {
+      "id": "money_guaranteed_returns",
+      "title": "Promises guaranteed investment returns",
+      "description": "No legitimate investment guarantees returns. Promises of guaranteed profits, risk-free investing, or unrealistic percentages (especially per day/week) are hallmarks of fraud.",
+      "weight": 5.0,
+      "category": "Financial Red Flags"
+    },
+    {
+      "id": "money_too_good",
+      "title": "Offer seems too good to be true",
+      "description": "Free money, amazing deals, incredible returns, or winning a contest you never entered. If it seems too good to be true, it almost certainly is.",
+      "weight": 3.0,
+      "category": "Financial Red Flags"
+    },
+    {
+      "id": "info_personal_details",
+      "title": "Asks for personal information (SSN, DOB, etc.)",
+      "description": "Requests for your Social Security number, date of birth, mother's maiden name, or other personal details — especially via text, email, or unsolicited calls — are attempts at identity theft.",
+      "weight": 5.0,
+      "category": "Information Harvesting"
+    },
+    {
+      "id": "info_bank_credentials",
+      "title": "Asks for bank login or account details",
+      "description": "No legitimate company or bank employee will ever ask for your online banking password, full account number, or PIN via text, email, or phone call.",
+      "weight": 5.0,
+      "category": "Information Harvesting"
+    },
+    {
+      "id": "info_verification_code",
+      "title": "Asks you to share a verification code",
+      "description": "They ask for a code sent to your phone. Sharing a 2FA or verification code gives scammers access to your accounts. No legitimate service asks you to share these codes.",
+      "weight": 5.0,
+      "category": "Information Harvesting"
+    },
+    {
+      "id": "info_id_documents",
+      "title": "Wants copies of ID documents",
+      "description": "Requests for photos of your driver's license, passport, or other ID documents are attempts to steal your identity. Legitimate verification happens through secure, official portals.",
+      "weight": 4.0,
+      "category": "Information Harvesting"
+    },
+    {
+      "id": "info_remote_access",
+      "title": "Wants remote access to your computer or phone",
+      "description": "Being asked to download TeamViewer, AnyDesk, or other remote access software gives scammers complete control of your device. Tech support scammers use this to steal data and money.",
+      "weight": 5.0,
+      "category": "Information Harvesting"
+    },
+    {
+      "id": "info_click_link",
+      "title": "Contains links to click",
+      "description": "Suspicious messages contain links to phishing sites that look like real login pages. Always go to websites by typing the URL yourself — never click links in unexpected messages.",
+      "weight": 3.0,
+      "category": "Information Harvesting"
+    },
+    {
+      "id": "verify_no_official_contact",
+      "title": "Cannot verify through official channels",
+      "description": "You can't find the company, person, or organization through independent research. Legitimate entities have verifiable online presence, contact information, and registrations.",
+      "weight": 4.0,
+      "category": "Verification"
+    },
+    {
+      "id": "verify_spoofed_identity",
+      "title": "Caller ID or email looks official but feels off",
+      "description": "Scammers can spoof phone numbers and create email addresses that look nearly identical to real ones. Don't trust caller ID or sender addresses alone — verify independently.",
+      "weight": 3.0,
+      "category": "Verification"
+    },
+    {
+      "id": "verify_no_contract",
+      "title": "No written contract or official documentation",
+      "description": "Legitimate business deals, jobs, and investments come with written agreements. If they resist putting anything in writing, it's a red flag.",
+      "weight": 3.0,
+      "category": "Verification"
+    },
+    {
+      "id": "verify_fake_website",
+      "title": "Website looks unprofessional or recently created",
+      "description": "Scam websites are often new, have poor design, missing contact info, or copied content. Check the domain registration date and look for reviews before trusting a site.",
+      "weight": 3.0,
+      "category": "Verification"
+    },
+    {
+      "id": "verify_no_reviews",
+      "title": "No independent reviews or references",
+      "description": "A legitimate company or investment platform will have independent reviews, media mentions, and a track record. If you can only find information provided by them, be suspicious.",
+      "weight": 3.0,
+      "category": "Verification"
+    },
+    {
+      "id": "invest_secret_method",
+      "title": "Claims to have a secret or insider method",
+      "description": "There are no secret methods to guaranteed wealth. Claims of insider information, secret algorithms, or exclusive access are designed to make you feel special and bypass your skepticism.",
+      "weight": 4.0,
+      "category": "Investment Red Flags"
+    },
+    {
+      "id": "invest_show_profits",
+      "title": "Shows screenshots of their own profits",
+      "description": "Scammers show fake screenshots of trading profits to build trust. These are easily fabricated. Never invest based on someone else's claimed returns.",
+      "weight": 4.0,
+      "category": "Investment Red Flags"
+    },
+    {
+      "id": "invest_unknown_platform",
+      "title": "Uses an unfamiliar trading or investment platform",
+      "description": "Fake platforms look professional but aren't registered with financial regulators (SEC, FINRA). Always verify any investment platform through official regulatory databases.",
+      "weight": 4.0,
+      "category": "Investment Red Flags"
+    },
+    {
+      "id": "invest_cant_withdraw",
+      "title": "Cannot withdraw your money from the platform",
+      "description": "The platform shows profits but you can't withdraw — they demand fees, taxes, or larger deposits first. This is the most obvious sign you're on a fraudulent platform.",
+      "weight": 5.0,
+      "category": "Investment Red Flags"
+    },
+    {
+      "id": "invest_recruit_others",
+      "title": "Encouraged to recruit friends or family",
+      "description": "Being asked to bring in others is a hallmark of pyramid and Ponzi schemes. Legitimate investments don't need recruitment — they stand on their own merits.",
+      "weight": 4.0,
+      "category": "Investment Red Flags"
+    },
+    {
+      "id": "job_pay_to_start",
+      "title": "Must pay for training, equipment, or background check",
+      "description": "Legitimate employers never charge you to start a job. Fees for training materials, equipment, or background checks that you must pay upfront are scam indicators.",
+      "weight": 5.0,
+      "category": "Job & Opportunity Red Flags"
+    },
+    {
+      "id": "job_too_easy",
+      "title": "Job sounds too easy for the pay offered",
+      "description": "Promises of high pay for minimal work (data entry, product reviews, social media likes) are designed to lure you in before extracting money or using you as a money mule.",
+      "weight": 3.0,
+      "category": "Job & Opportunity Red Flags"
+    },
+    {
+      "id": "job_no_interview",
+      "title": "Hired without a real interview",
+      "description": "Being offered a job without a proper interview, especially through text or messaging apps, is a red flag. Real employers have structured hiring processes.",
+      "weight": 3.0,
+      "category": "Job & Opportunity Red Flags"
+    },
+    {
+      "id": "job_forward_packages",
+      "title": "Asked to receive and forward packages or money",
+      "description": "Being asked to receive packages and reship them, or receive money and forward it, makes you an unwitting accomplice in criminal activity (money laundering or trafficking stolen goods).",
+      "weight": 5.0,
+      "category": "Job & Opportunity Red Flags"
+    },
+    {
+      "id": "job_personal_account",
+      "title": "Asked to use your personal bank account for business",
+      "description": "A 'employer' who wants to deposit funds into your personal account and have you transfer them is using you as a money mule. This is illegal and you will be held responsible.",
+      "weight": 5.0,
+      "category": "Job & Opportunity Red Flags"
+    }
+  ]
+}

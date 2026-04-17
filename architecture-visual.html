@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoveLlama — Platform Architecture</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232733;
+    --border: #2e3345;
+    --text: #e4e6ef;
+    --text-dim: #8b8fa5;
+    --accent: #a87bff;
+    --accent-dim: #7c5cbf;
+    --green: #34d399;
+    --green-dim: #065f46;
+    --blue: #60a5fa;
+    --blue-dim: #1e3a5f;
+    --orange: #fb923c;
+    --orange-dim: #7c3d10;
+    --red: #f87171;
+    --red-dim: #7f1d1d;
+    --teal: #2dd4bf;
+    --teal-dim: #134e4a;
+    --pink: #f472b6;
+    --pink-dim: #831843;
+    --yellow: #fbbf24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .header h1 {
+    font-size: 36px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .header p {
+    color: var(--text-dim);
+    font-size: 16px;
+  }
+  .version-badge {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 13px;
+    color: var(--accent);
+    margin-top: 12px;
+  }
+
+  /* Section titles */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    padding-left: 4px;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+  .legend-dot.on-device { background: var(--green); }
+  .legend-dot.cloud { background: var(--blue); }
+  .legend-dot.storage { background: var(--orange); }
+  .legend-dot.external { background: var(--pink); }
+  .legend-dot.consent { background: var(--yellow); }
+
+  /* Main grid */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  /* Device layer */
+  .device-frame {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    position: relative;
+  }
+  .device-frame::before {
+    content: 'iOS DEVICE';
+    position: absolute;
+    top: -11px;
+    left: 32px;
+    background: var(--surface);
+    padding: 0 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--green);
+    border: 1px solid var(--green-dim);
+    border-radius: 4px;
+  }
+
+  /* Cloud layer */
+  .cloud-frame {
+    background: var(--surface);
+    border: 2px solid var(--blue-dim);
+    border-radius: 24px;
+    padding: 32px;
+    position: relative;
+  }
+  .cloud-frame::before {
+    content: 'CLOUD SERVICES';
+    position: absolute;
+    top: -11px;
+    left: 32px;
+    background: var(--surface);
+    padding: 0 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--blue);
+    border: 1px solid var(--blue-dim);
+    border-radius: 4px;
+  }
+
+  /* Infra layer */
+  .infra-frame {
+    background: var(--surface);
+    border: 2px solid var(--orange-dim);
+    border-radius: 24px;
+    padding: 32px;
+    position: relative;
+  }
+  .infra-frame::before {
+    content: 'INFRASTRUCTURE & DISTRIBUTION';
+    position: absolute;
+    top: -11px;
+    left: 32px;
+    background: var(--surface);
+    padding: 0 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--orange);
+    border: 1px solid var(--orange-dim);
+    border-radius: 4px;
+  }
+
+  /* Inner grids */
+  .inner-grid {
+    display: grid;
+    gap: 16px;
+  }
+  .inner-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .inner-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .inner-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+  @media (max-width: 900px) {
+    .inner-grid.cols-3, .inner-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .inner-grid.cols-3, .inner-grid.cols-4, .inner-grid.cols-2 { grid-template-columns: 1fr; }
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover {
+    border-color: var(--accent-dim);
+    transform: translateY(-2px);
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .card-icon.green { background: var(--green-dim); }
+  .card-icon.blue { background: var(--blue-dim); }
+  .card-icon.orange { background: var(--orange-dim); }
+  .card-icon.red { background: var(--red-dim); }
+  .card-icon.teal { background: var(--teal-dim); }
+  .card-icon.pink { background: var(--pink-dim); }
+  .card-icon.accent { background: rgba(168, 123, 255, 0.15); }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .card-subtitle {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .card-body {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .card-body ul {
+    list-style: none;
+    padding: 0;
+  }
+  .card-body li {
+    padding: 3px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+  .card-body li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  /* Tag pills */
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-right: 4px;
+    margin-top: 4px;
+  }
+  .tag.green { background: var(--green-dim); color: var(--green); }
+  .tag.blue { background: var(--blue-dim); color: var(--blue); }
+  .tag.orange { background: var(--orange-dim); color: var(--orange); }
+  .tag.red { background: var(--red-dim); color: var(--red); }
+  .tag.teal { background: var(--teal-dim); color: var(--teal); }
+  .tag.pink { background: var(--pink-dim); color: var(--pink); }
+  .tag.accent { background: rgba(168, 123, 255, 0.15); color: var(--accent); }
+
+  /* Flow arrows */
+  .flow-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 0;
+    position: relative;
+  }
+  .flow-connector .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .flow-connector .arrow-line {
+    width: 2px;
+    height: 24px;
+    background: var(--border);
+  }
+  .flow-connector .arrow-head {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid var(--border);
+  }
+  .flow-connector .flow-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    background: var(--bg);
+    padding: 2px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    position: absolute;
+    white-space: nowrap;
+  }
+  .flow-connector .flow-label.left { left: 20%; }
+  .flow-connector .flow-label.right { right: 20%; }
+  .flow-connector .flow-label.center { left: 50%; transform: translateX(-50%); }
+
+  /* Consent gate */
+  .consent-gate {
+    background: rgba(251, 191, 36, 0.06);
+    border: 1px dashed rgba(251, 191, 36, 0.3);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--yellow);
+    text-align: center;
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  /* Pipeline diagram */
+  .pipeline {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 16px 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .pipeline-step {
+    flex: 1;
+    min-width: 140px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 14px;
+    text-align: center;
+    position: relative;
+  }
+  .pipeline-step:first-child { border-radius: 10px 0 0 10px; }
+  .pipeline-step:last-child { border-radius: 0 10px 10px 0; }
+  .pipeline-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 8px solid var(--border);
+    z-index: 1;
+  }
+  .pipeline-step .step-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .pipeline-step .step-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .pipeline-step .step-detail {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* Endpoint table */
+  .endpoint-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 12px;
+  }
+  .endpoint-table th {
+    text-align: left;
+    color: var(--text-dim);
+    font-weight: 600;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .endpoint-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(46, 51, 69, 0.5);
+    color: var(--text);
+  }
+  .endpoint-table code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    background: var(--bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--teal);
+  }
+  .endpoint-table .method {
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .method.post { color: var(--green); }
+  .method.get { color: var(--blue); }
+  .method.put { color: var(--orange); }
+
+  /* Full-width card */
+  .card.full { grid-column: 1 / -1; }
+
+  /* Parallel indicator */
+  .parallel-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(168, 123, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .stat-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* Requirement list */
+  .req-list {
+    list-style: none;
+    padding: 0;
+  }
+  .req-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(46, 51, 69, 0.5);
+    font-size: 13px;
+  }
+  .req-list li:last-child { border-bottom: none; }
+  .req-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+  .req-text strong { color: var(--text); }
+  .req-text span { color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>LoveLlama Platform Architecture</h1>
+    <p>Romance Scam Detection &mdash; iOS / iPadOS</p>
+    <div class="version-badge">v1.7.0 &middot; SwiftUI &middot; Zero Dependencies</div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot on-device"></div> On-Device (Offline)</div>
+    <div class="legend-item"><div class="legend-dot cloud"></div> Cloud API</div>
+    <div class="legend-item"><div class="legend-dot storage"></div> Persistence</div>
+    <div class="legend-item"><div class="legend-dot external"></div> External Service</div>
+    <div class="legend-item"><div class="legend-dot consent"></div> Consent Gate</div>
+  </div>
+
+  <div class="arch-grid">
+
+    <!-- ========== ON-DEVICE LAYER ========== -->
+    <div class="device-frame">
+      <div class="section-title" style="margin-bottom: 24px;">User-Facing Features (6-Tab Navigation)</div>
+
+      <div class="inner-grid cols-3" style="margin-bottom: 24px;">
+        <!-- Tab: Chat Analysis -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon green">💬</div>
+            <div>
+              <div class="card-title">Chat Analysis</div>
+              <div class="card-subtitle">Tab 1 &mdash; Analyze</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li>Paste text or OCR from screenshot</li>
+              <li>Situation context (duration, met in person, money requests)</li>
+              <li>Local scan: 300+ regex patterns, 17 categories</li>
+              <li>Cloud: Claude API enhanced analysis</li>
+            </ul>
+            <div style="margin-top: 8px;">
+              <span class="tag green">LocalPatternScanner</span>
+              <span class="tag green">OCRService</span>
+              <span class="tag blue">ClaudeAPIClient</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Media Verification -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon blue">🔍</div>
+            <div>
+              <div class="card-title">Media Verification</div>
+              <div class="card-subtitle">Tab 2 &mdash; Photo / Video / Audio</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Photo:</strong> 9 forensic checks + RD + Scam.ai</li>
+              <li><strong>Video:</strong> RD + Scam.ai (parallel)</li>
+              <li><strong>Audio:</strong> Reality Defender only</li>
+              <li>Triple-result cards with side-by-side comparison</li>
+            </ul>
+            <div style="margin-top: 8px;">
+              <span class="tag green">LocalImageAnalyzer</span>
+              <span class="tag blue">RealityDefender</span>
+              <span class="tag teal">Scam.ai</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Checklist -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon orange">✅</div>
+            <div>
+              <div class="card-title">Red Flag Checklist</div>
+              <div class="card-subtitle">Tab 3 &mdash; 100% Offline</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li>80+ weighted items across 4 categories</li>
+              <li>Communication, Emotional, Identity, Financial</li>
+              <li>Combo scoring (financial + emotional = +0.15)</li>
+              <li>Critical floor: single high-weight item triggers minimum</li>
+            </ul>
+            <div style="margin-top: 8px;">
+              <span class="tag green">ChecklistScorer</span>
+              <span class="tag orange">ChecklistData.json</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- On-Device Services -->
+      <div class="section-title">On-Device Analysis Services</div>
+
+      <div class="inner-grid cols-2" style="margin-bottom: 24px;">
+        <!-- Local Pattern Scanner -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon green">🧠</div>
+            <div>
+              <div class="card-title">LocalPatternScanner</div>
+              <div class="card-subtitle">836 lines &middot; Always runs &middot; No network required</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li><strong>17 pattern categories</strong> with 300+ pre-compiled NSRegularExpressions</li>
+              <li><strong>Critical</strong> (5.0): Financial requests, Pig butchering</li>
+              <li><strong>High</strong> (3.5-4.0): Emotional manipulation, Urgency, Sextortion</li>
+              <li><strong>Medium</strong> (2.5-3.0): Love bombing, Isolation, Military stories</li>
+              <li><strong>Low</strong> (1.5-2.0): Grammar issues, Suspicious openers</li>
+              <li>Stage detection: early &rarr; building trust &rarr; escalating &rarr; requesting</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Local Image Analyzer -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon green">🖼️</div>
+            <div>
+              <div class="card-title">LocalImageAnalyzer</div>
+              <div class="card-subtitle">968 lines &middot; Vision framework &middot; 9 concurrent checks</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li>Face symmetry <span class="tag accent">VNDetectFaceLandmarks</span></li>
+              <li>Error Level Analysis <span style="color:var(--accent); font-size:11px;">(weight 2.0 — strongest signal)</span></li>
+              <li>Edge artifacts <span style="color:var(--accent); font-size:11px;">(weight 1.8)</span></li>
+              <li>Noise consistency, Lighting consistency</li>
+              <li>Texture uniformity, Background consistency</li>
+              <li>Color distribution, Sharpness patterns</li>
+            </ul>
+            <p style="margin-top: 8px; font-size: 12px; color: var(--text-dim);">
+              Images downscaled to 1024px max before processing.
+              Thresholds: <span style="color:var(--green);">low &lt;0.25</span> &middot;
+              <span style="color:var(--yellow);">med 0.25-0.50</span> &middot;
+              <span style="color:var(--orange);">high 0.50-0.75</span> &middot;
+              <span style="color:var(--red);">critical &ge;0.75</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orchestration Engines -->
+      <div class="section-title">Orchestration Engines (State Machines)</div>
+
+      <div class="inner-grid cols-3" style="margin-bottom: 24px;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon accent">⚙️</div>
+            <div><div class="card-title">ScamAnalysisEngine</div></div>
+          </div>
+          <div class="card-body">
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <div class="step-num">STEP 1</div>
+                <div class="step-label">Local Scan</div>
+                <div class="step-detail">Always runs</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num">STEP 2</div>
+                <div class="step-label">Consent?</div>
+                <div class="step-detail">Check gate</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num">STEP 3</div>
+                <div class="step-label">Claude API</div>
+                <div class="step-detail">If key + consent</div>
+              </div>
+            </div>
+            <p style="font-size: 11px; color: var(--text-dim);">States: idle &rarr; scanning &rarr; analyzing &rarr; complete / error</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon accent">⚙️</div>
+            <div><div class="card-title">AIImageDetector</div></div>
+          </div>
+          <div class="card-body">
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <div class="step-num">STEP 1</div>
+                <div class="step-label">Local (9 checks)</div>
+                <div class="step-detail">Always runs</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num">STEP 2</div>
+                <div class="step-label">Consent?</div>
+                <div class="step-detail">Check gate</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num">STEP 3</div>
+                <div class="step-label">RD + Scam.ai</div>
+                <div class="step-detail"><span class="parallel-badge">PARALLEL</span></div>
+              </div>
+            </div>
+            <p style="font-size: 11px; color: var(--text-dim);">States: idle &rarr; scanning &rarr; uploading &rarr; analyzing &rarr; complete / error</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon accent">⚙️</div>
+            <div><div class="card-title">MediaDetector</div></div>
+          </div>
+          <div class="card-body">
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <div class="step-num">STEP 1</div>
+                <div class="step-label">Validate</div>
+                <div class="step-detail">Size limits</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num">STEP 2</div>
+                <div class="step-label">Resolve Keys</div>
+                <div class="step-detail">Embedded/BYOK</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num">STEP 3</div>
+                <div class="step-label">RD + Scam.ai</div>
+                <div class="step-detail"><span class="parallel-badge">PARALLEL</span></div>
+              </div>
+            </div>
+            <p style="font-size: 11px; color: var(--text-dim);">Video &le; 250MB &middot; Audio &le; 20MB &middot; Photo &le; 20MB</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security & Storage (on-device) -->
+      <div class="section-title">On-Device Security & Storage</div>
+
+      <div class="inner-grid cols-4">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon orange">🔑</div>
+            <div><div class="card-title">Keychain</div></div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li>Claude API key <span class="tag accent">BYOK</span></li>
+              <li>Reality Defender key <span class="tag accent">BYOK</span></li>
+              <li>Device-only (no iCloud sync)</li>
+              <li>Actor-isolated access</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon orange">💾</div>
+            <div><div class="card-title">SwiftData</div></div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li>Conversation (chat history)</li>
+              <li>PhotoCheck (media history)</li>
+              <li>ChecklistSession (checklist history)</li>
+              <li>SQLite-backed, on-device</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon orange">⚙️</div>
+            <div><div class="card-title">UserDefaults</div></div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li>General consent flag</li>
+              <li>Chat API consent</li>
+              <li>Photo API consent</li>
+              <li>Consent dates</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon green">🔒</div>
+            <div><div class="card-title">EmbeddedKeyProvider</div></div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li>RD key (XOR obfuscated)</li>
+              <li>Scam.ai key (XOR obfuscated)</li>
+              <li>Decoded at runtime only</li>
+              <li>Not visible in binary</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consent Gate -->
+    <div class="flow-connector">
+      <div class="arrow">
+        <div class="arrow-line"></div>
+        <div class="arrow-head"></div>
+      </div>
+      <div class="flow-label center">
+        🔒 Consent Gate &mdash; Cloud APIs only called with explicit per-feature user consent
+      </div>
+    </div>
+
+    <!-- ========== CLOUD SERVICES LAYER ========== -->
+    <div class="cloud-frame">
+      <div class="section-title" style="margin-bottom: 24px;">External API Services</div>
+
+      <div class="inner-grid cols-3" style="margin-bottom: 24px;">
+        <!-- Claude API -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon pink">🤖</div>
+            <div>
+              <div class="card-title">Anthropic Claude API</div>
+              <div class="card-subtitle">Text / Conversation Analysis</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="endpoint-table">
+              <tr>
+                <td><span class="method post">POST</span></td>
+                <td><code>/v1/messages</code></td>
+              </tr>
+            </table>
+            <ul style="margin-top: 8px;">
+              <li><strong>Host:</strong> api.anthropic.com</li>
+              <li><strong>Model:</strong> claude-sonnet-4-20250514</li>
+              <li><strong>Auth:</strong> <code>x-api-key</code> header</li>
+              <li><strong>Key:</strong> User-provided (BYOK)</li>
+              <li><strong>Payload:</strong> System prompt + conversation + context</li>
+              <li><strong>Response:</strong> JSON analysis (score, patterns, recommendation)</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Reality Defender -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon blue">🛡️</div>
+            <div>
+              <div class="card-title">Reality Defender API</div>
+              <div class="card-subtitle">Deepfake Detection &mdash; Photo, Video, Audio</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="endpoint-table">
+              <tr>
+                <td><span class="method post">POST</span></td>
+                <td><code>/files/aws-presigned</code></td>
+              </tr>
+              <tr>
+                <td><span class="method put">PUT</span></td>
+                <td><code>{presignedUrl}</code> (S3)</td>
+              </tr>
+              <tr>
+                <td><span class="method get">GET</span></td>
+                <td><code>/media/users/{requestId}</code></td>
+              </tr>
+            </table>
+            <ul style="margin-top: 8px;">
+              <li><strong>Host:</strong> api.prd.realitydefender.xyz</li>
+              <li><strong>Auth:</strong> <code>X-API-KEY</code> header</li>
+              <li><strong>Key:</strong> Embedded (XOR) or BYOK</li>
+              <li><strong>Flow:</strong> Presign &rarr; S3 Upload &rarr; Poll results</li>
+              <li><strong>Polling:</strong> 3s intervals (Photo 60s / Video 120s / Audio 90s)</li>
+              <li><strong>Media:</strong> JPEG, MP4, MOV, MP3, WAV, M4A, OGG, FLAC</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Scam.ai -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon teal">👁️</div>
+            <div>
+              <div class="card-title">Scam.ai API</div>
+              <div class="card-subtitle">AI Image & Video Detection</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="endpoint-table">
+              <tr>
+                <td><span class="method post">POST</span></td>
+                <td><code>/ai-image-detection/detect-file</code></td>
+              </tr>
+              <tr>
+                <td><span class="method post">POST</span></td>
+                <td><code>/video/detection</code></td>
+              </tr>
+            </table>
+            <ul style="margin-top: 8px;">
+              <li><strong>Host:</strong> api.scam.ai</li>
+              <li><strong>Auth:</strong> <code>x-api-key</code> header</li>
+              <li><strong>Key:</strong> Embedded (XOR) only</li>
+              <li><strong>Format:</strong> Multipart form-data</li>
+              <li><strong>Response:</strong> <code>likely_ai_generated</code> + <code>confidence_score</code> (0-1)</li>
+              <li><strong>Mapping:</strong> &ge;0.75 = FAKE, &ge;0.50 = SUSPICIOUS</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- API call flow -->
+      <div class="section-title">Cloud Service Dependencies Per Feature</div>
+
+      <div style="overflow-x: auto;">
+        <table class="endpoint-table" style="min-width: 600px;">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Anthropic Claude</th>
+              <th>Reality Defender</th>
+              <th>Scam.ai</th>
+              <th>AWS S3 (via RD)</th>
+              <th>Execution</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Chat Analysis</strong></td>
+              <td>✅ Required</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>Sequential (local first)</td>
+            </tr>
+            <tr>
+              <td><strong>Photo Verification</strong></td>
+              <td>—</td>
+              <td>✅ Optional</td>
+              <td>✅ Optional</td>
+              <td>✅ (RD upload)</td>
+              <td><span class="parallel-badge">RD + Scam.ai PARALLEL</span></td>
+            </tr>
+            <tr>
+              <td><strong>Video Detection</strong></td>
+              <td>—</td>
+              <td>✅ Required</td>
+              <td>✅ Optional</td>
+              <td>✅ (RD upload)</td>
+              <td><span class="parallel-badge">RD + Scam.ai PARALLEL</span></td>
+            </tr>
+            <tr>
+              <td><strong>Audio Detection</strong></td>
+              <td>—</td>
+              <td>✅ Required</td>
+              <td>—</td>
+              <td>✅ (RD upload)</td>
+              <td>Sequential</td>
+            </tr>
+            <tr>
+              <td><strong>Checklist</strong></td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>100% on-device</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Arrow to infra -->
+    <div class="flow-connector">
+      <div class="arrow">
+        <div class="arrow-line"></div>
+        <div class="arrow-head"></div>
+      </div>
+    </div>
+
+    <!-- ========== INFRASTRUCTURE LAYER ========== -->
+    <div class="infra-frame">
+      <div class="section-title" style="margin-bottom: 24px;">Backend Infrastructure Requirements</div>
+
+      <div class="inner-grid cols-2" style="margin-bottom: 24px;">
+        <!-- What LoveLlama needs -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon green">✅</div>
+            <div>
+              <div class="card-title">Required Infrastructure</div>
+              <div class="card-subtitle">What the app depends on to operate</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul class="req-list">
+              <li>
+                <div class="req-icon" style="background: var(--pink-dim);">🍎</div>
+                <div class="req-text">
+                  <strong>Apple App Store</strong><br>
+                  <span>Distribution via App Store (ID: 6759401280). Requires active Apple Developer Program membership ($99/yr), code signing with Team ID Q73RN5N9Y2.</span>
+                </div>
+              </li>
+              <li>
+                <div class="req-icon" style="background: var(--blue-dim);">🌐</div>
+                <div class="req-text">
+                  <strong>Anthropic API Account</strong><br>
+                  <span>Users bring their own API key. No server-side proxy — the app calls api.anthropic.com directly from device. Usage billed to user's Anthropic account.</span>
+                </div>
+              </li>
+              <li>
+                <div class="req-icon" style="background: var(--blue-dim);">🛡️</div>
+                <div class="req-text">
+                  <strong>Reality Defender API Account</strong><br>
+                  <span>Embedded API key included. App makes direct calls to api.prd.realitydefender.xyz. Files uploaded to AWS S3 via RD-provided presigned URLs. Account must remain active and funded.</span>
+                </div>
+              </li>
+              <li>
+                <div class="req-icon" style="background: var(--teal-dim);">👁️</div>
+                <div class="req-text">
+                  <strong>Scam.ai API Account</strong><br>
+                  <span>Embedded API key included. App makes direct calls to api.scam.ai. Account must remain active and funded.</span>
+                </div>
+              </li>
+              <li>
+                <div class="req-icon" style="background: var(--orange-dim);">📋</div>
+                <div class="req-text">
+                  <strong>GitHub Gist (Force Update)</strong><br>
+                  <span>version.json hosted on GitHub Gist (ID: dc598476815a301faeccde950194ece9). Checked on every app launch to enforce minimum version. Free tier, no auth required.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- What LoveLlama does NOT need -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon red">🚫</div>
+            <div>
+              <div class="card-title">NOT Required</div>
+              <div class="card-subtitle">Zero custom backend infrastructure</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul class="req-list">
+              <li>
+                <div class="req-icon" style="background: var(--red-dim);">🖥️</div>
+                <div class="req-text">
+                  <strong>No custom backend server</strong><br>
+                  <span>All API calls go directly from device to third-party services. No proxy, no middleware, no API gateway.</span>
+                </div>
+              </li>
+              <li>
+                <div class="req-icon" style="background: var(--red-dim);">🗄️</div>
+                <div class="req-text">
+                  <strong>No server-side database</strong><br>
+                  <span>All user data stored locally on-device via SwiftData (SQLite) and Keychain. No cloud sync, no remote backup.</span>
+                </div>
+              </li>
+              <li>
+                <div class="req-icon" style="background: var(--red-dim);">👤</div>
+                <div class="req-text">
+                  <strong>No user accounts or auth</strong><br>
+                  <span>No sign-up, no login, no user management. App works immediately after consent.</span>
+                </div>
+              </li>
+              <li>
+                <div class="req-icon" style="background: var(--red-dim);">📊</div>
+                <div class="req-text">
+                  <strong>No analytics or telemetry</strong><br>
+                  <span>No tracking, no crash reporting, no usage analytics. Fully private.</span>
+                </div>
+              </li>
+              <li>
+                <div class="req-icon" style="background: var(--red-dim);">🔄</div>
+                <div class="req-text">
+                  <strong>No push notifications</strong><br>
+                  <span>No APNs, no server-sent events, no background refresh.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cost & accounts -->
+      <div class="section-title">Service Accounts & Cost Structure</div>
+
+      <div class="inner-grid cols-3">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon pink">🍎</div>
+            <div><div class="card-title">Apple Developer</div></div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Cost:</strong> $99/year</li>
+              <li><strong>Purpose:</strong> App Store distribution, code signing</li>
+              <li><strong>Team ID:</strong> Q73RN5N9Y2</li>
+              <li><strong>Signing:</strong> Apple Development cert (W3FCV58V6S)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon blue">🛡️</div>
+            <div><div class="card-title">Reality Defender</div></div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Cost:</strong> Per-API-call pricing</li>
+              <li><strong>Purpose:</strong> Deepfake detection (photo/video/audio)</li>
+              <li><strong>Billing:</strong> Developer-funded (embedded key)</li>
+              <li><strong>Includes:</strong> AWS S3 presigned uploads</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon teal">👁️</div>
+            <div><div class="card-title">Scam.ai</div></div>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Cost:</strong> Per-API-call pricing</li>
+              <li><strong>Purpose:</strong> AI image & video detection</li>
+              <li><strong>Billing:</strong> Developer-funded (embedded key)</li>
+              <li><strong>Scope:</strong> Image + Video (no audio)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== NETWORK TOPOLOGY ========== -->
+    <div style="margin-top: 12px;">
+      <div class="section-title">Network Topology &mdash; All Traffic Flows</div>
+      <div class="device-frame" style="border-color: var(--accent-dim);">
+        <div style="position: absolute; top: -11px; left: 32px; background: var(--surface); padding: 0 12px; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--accent); border: 1px solid var(--accent-dim); border-radius: 4px;">
+          NETWORK MAP
+        </div>
+
+        <pre style="font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.8; color: var(--text-dim); overflow-x: auto; padding: 8px 0;">
+<span style="color: var(--green);">┌─────────────────────────────┐</span>
+<span style="color: var(--green);">│      iOS Device (User)      │</span>
+<span style="color: var(--green);">│  SwiftData · Keychain · UDF │</span>
+<span style="color: var(--green);">└─────────┬───┬───┬───┬───────┘</span>
+          │   │   │   │
+          │   │   │   │  <span style="color: var(--yellow);">All HTTPS, direct from device</span>
+          │   │   │   │  <span style="color: var(--yellow);">No custom proxy or backend</span>
+          │   │   │   │
+<span style="color: var(--pink);">    ┌─────┘   │   │   └─────────────────────────────┐</span>
+<span style="color: var(--pink);">    │</span>         │   │                               <span style="color: var(--pink);">│</span>
+<span style="color: var(--pink);">    ▼</span>         │   │                               <span style="color: var(--pink);">▼</span>
+<span style="color: var(--pink);">┌─────────┐</span>   │   │                        <span style="color: var(--pink);">┌──────────────┐</span>
+<span style="color: var(--pink);">│Anthropic│</span>   │   │                        <span style="color: var(--pink);">│ GitHub Gist  │</span>
+<span style="color: var(--pink);">│Claude   │</span>   │   │                        <span style="color: var(--pink);">│ version.json │</span>
+<span style="color: var(--pink);">│ API     │</span>   │   │                        <span style="color: var(--pink);">└──────────────┘</span>
+<span style="color: var(--pink);">└─────────┘</span>   │   │
+   <span style="color: var(--text-dim);">BYOK</span>      │   │
+              │   │
+<span style="color: var(--blue);">      ┌───────┘   └───────┐</span>
+<span style="color: var(--blue);">      │                   │</span>
+<span style="color: var(--blue);">      ▼                   ▼</span>
+<span style="color: var(--blue);">┌───────────┐     ┌───────────┐</span>
+<span style="color: var(--blue);">│  Reality  │     │  Scam.ai  │</span>
+<span style="color: var(--blue);">│ Defender  │     │   API     │</span>
+<span style="color: var(--blue);">│   API     │     └───────────┘</span>
+<span style="color: var(--blue);">└─────┬─────┘</span>       <span style="color: var(--text-dim);">Embedded</span>
+<span style="color: var(--blue);">      │</span>            <span style="color: var(--text-dim);">key only</span>
+<span style="color: var(--blue);">      ▼</span>
+<span style="color: var(--blue);">┌───────────┐</span>
+<span style="color: var(--blue);">│  AWS S3   │</span>  <span style="color: var(--text-dim);">Presigned URL upload</span>
+<span style="color: var(--blue);">│ (via RD)  │</span>  <span style="color: var(--text-dim);">for media files</span>
+<span style="color: var(--blue);">└───────────┘</span>
+</pre>
+      </div>
+    </div>
+
+    <!-- ========== STATS ========== -->
+    <div>
+      <div class="section-title">Platform Metrics</div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value" style="color: var(--green);">~8,200</div>
+          <div class="stat-label">Lines of Swift</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: var(--accent);">0</div>
+          <div class="stat-label">Third-Party Dependencies</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: var(--blue);">3</div>
+          <div class="stat-label">Cloud API Integrations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: var(--orange);">300+</div>
+          <div class="stat-label">Scam Regex Patterns</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: var(--teal);">9</div>
+          <div class="stat-label">Image Forensic Checks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: var(--pink);">80+</div>
+          <div class="stat-label">Checklist Items</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: var(--yellow);">0</div>
+          <div class="stat-label">Backend Servers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: var(--red);">0</div>
+          <div class="stat-label">User Data Collected</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- arch-grid -->
+</div><!-- container -->
+
+</body>
+</html>

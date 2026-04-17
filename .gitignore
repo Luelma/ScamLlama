@@ -1,40 +1,13 @@
-# Xcode
+.DS_Store
 build/
 DerivedData/
-*.xcuserdata
-*.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xcuserdatad
 xcuserdata/
-*.pbxuser
-*.mode1v3
-*.mode2v3
-*.perspectivev3
-*.xccheckout
 *.moved-aside
-
-# Swift Package Manager
-.build/
-Packages/
-Package.pins
-Package.resolved
-
-# CocoaPods
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
 Pods/
-
-# OS files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-Thumbs.db
-
-# Screenshots (generated, not source)
-screenshots/
-
-# Archives and exports
-*.xcarchive
-export-*/
-
-# API keys
-*.env
-AppStoreScreenshots/
+.build/
