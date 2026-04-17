@@ -1,0 +1,655 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000001 /* ScamLlamaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000001 /* ScamLlamaApp.swift */; };
+		A10000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000002 /* ContentView.swift */; };
+		A10000003 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000003 /* Enums.swift */; };
+		A10000004 /* AnalysisResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000004 /* AnalysisResult.swift */; };
+		A10000005 /* ChecklistItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000005 /* ChecklistItem.swift */; };
+		A10000006 /* ChecklistSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000006 /* ChecklistSession.swift */; };
+		A10000007 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000007 /* Conversation.swift */; };
+		A10000008 /* PhotoCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000008 /* PhotoCheck.swift */; };
+		A10000009 /* ChecklistScorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000009 /* ChecklistScorer.swift */; };
+		A10000010 /* ChecklistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010 /* ChecklistViewModel.swift */; };
+		A10000011 /* ChecklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000011 /* ChecklistView.swift */; };
+		A10000012 /* ChecklistResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000012 /* ChecklistResultView.swift */; };
+		A10000013 /* RiskGaugeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000013 /* RiskGaugeView.swift */; };
+		A10000014 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000014 /* DashboardView.swift */; };
+		A10000015 /* ChatAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000015 /* ChatAnalysisView.swift */; };
+		A10000016 /* MediaVerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000016 /* MediaVerificationView.swift */; };
+		A10000017 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000017 /* SettingsView.swift */; };
+		A10000018 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000018 /* Constants.swift */; };
+		A10000019 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000019 /* Extensions.swift */; };
+		A10000020 /* ChecklistData.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000020 /* ChecklistData.json */; };
+		A10000021 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000021 /* Assets.xcassets */; };
+		A10000022 /* APIKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000022 /* APIKeyManager.swift */; };
+		A10000023 /* ClaudeAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000023 /* ClaudeAPIClient.swift */; };
+		A10000024 /* LocalPatternScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000024 /* LocalPatternScanner.swift */; };
+		A10000042 /* LocalImageAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000042 /* LocalImageAnalyzer.swift */; };
+		A2A6FA646622F3ABFF4AD9E3 /* ForceUpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24309511346AB3471501D3D /* ForceUpdateChecker.swift */; };
+		A10000025 /* ScamAnalysisEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000025 /* ScamAnalysisEngine.swift */; };
+		A10000026 /* ChatAnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000026 /* ChatAnalysisViewModel.swift */; };
+		A10000027 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000027 /* SettingsViewModel.swift */; };
+		A10000028 /* ChatResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000028 /* ChatResultView.swift */; };
+		A10000029 /* LoadingAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000029 /* LoadingAnalysisView.swift */; };
+		A10000030 /* PatternCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000030 /* PatternCardView.swift */; };
+		A10000031 /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000031 /* OCRService.swift */; };
+		A10000032 /* RealityDefenderClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000032 /* RealityDefenderClient.swift */; };
+		A10000050 /* ScamAIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000050 /* ScamAIClient.swift */; };
+		A10000033 /* AIImageDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000033 /* AIImageDetector.swift */; };
+		A10000034 /* PhotoVerificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000034 /* PhotoVerificationViewModel.swift */; };
+		A10000035 /* PhotoResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000035 /* PhotoResultView.swift */; };
+		A10000036 /* HistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000036 /* HistoryListView.swift */; };
+		A10000037 /* HistoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000037 /* HistoryDetailView.swift */; };
+		A10000038 /* BrandedNavTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000038 /* BrandedNavTitle.swift */; };
+		A10000039 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A20000039 /* PrivacyInfo.xcprivacy */; };
+		A10000040 /* ConsentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000040 /* ConsentManager.swift */; };
+		A10000041 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000041 /* PrivacyPolicyView.swift */; };
+		A10000043 /* ConversationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000043 /* ConversationContext.swift */; };
+		A10000044 /* EmbeddedKeyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000044 /* EmbeddedKeyProvider.swift */; };
+		A10000045 /* MediaDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000045 /* MediaDetector.swift */; };
+		A10000046 /* MediaVerificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000046 /* MediaVerificationViewModel.swift */; };
+		A10000047 /* AudioRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000047 /* AudioRecorderView.swift */; };
+		A10000048 /* VideoRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000048 /* VideoRecorderView.swift */; };
+		A10000049 /* MediaResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000049 /* MediaResultView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000001 /* ScamLlamaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScamLlamaApp.swift; sourceTree = "<group>"; };
+		A20000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A20000003 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		A20000004 /* AnalysisResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisResult.swift; sourceTree = "<group>"; };
+		A20000005 /* ChecklistItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistItem.swift; sourceTree = "<group>"; };
+		A20000006 /* ChecklistSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistSession.swift; sourceTree = "<group>"; };
+		A20000007 /* Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
+		A20000008 /* PhotoCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCheck.swift; sourceTree = "<group>"; };
+		A20000009 /* ChecklistScorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistScorer.swift; sourceTree = "<group>"; };
+		A20000010 /* ChecklistViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistViewModel.swift; sourceTree = "<group>"; };
+		A20000011 /* ChecklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistView.swift; sourceTree = "<group>"; };
+		A20000012 /* ChecklistResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistResultView.swift; sourceTree = "<group>"; };
+		A20000013 /* RiskGaugeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiskGaugeView.swift; sourceTree = "<group>"; };
+		A20000014 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		A20000015 /* ChatAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAnalysisView.swift; sourceTree = "<group>"; };
+		A20000016 /* MediaVerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaVerificationView.swift; sourceTree = "<group>"; };
+		A20000017 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A20000018 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		A20000019 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		A20000020 /* ChecklistData.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChecklistData.json; sourceTree = "<group>"; };
+		A20000021 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A20000022 /* APIKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyManager.swift; sourceTree = "<group>"; };
+		A20000023 /* ClaudeAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPIClient.swift; sourceTree = "<group>"; };
+		A20000024 /* LocalPatternScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPatternScanner.swift; sourceTree = "<group>"; };
+		A20000042 /* LocalImageAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalImageAnalyzer.swift; sourceTree = "<group>"; };
+		A24309511346AB3471501D3D /* ForceUpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForceUpdateChecker.swift; sourceTree = "<group>"; };
+		A20000025 /* ScamAnalysisEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScamAnalysisEngine.swift; sourceTree = "<group>"; };
+		A20000026 /* ChatAnalysisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAnalysisViewModel.swift; sourceTree = "<group>"; };
+		A20000027 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		A20000028 /* ChatResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatResultView.swift; sourceTree = "<group>"; };
+		A20000029 /* LoadingAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingAnalysisView.swift; sourceTree = "<group>"; };
+		A20000030 /* PatternCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternCardView.swift; sourceTree = "<group>"; };
+		A20000031 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
+		A20000032 /* RealityDefenderClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealityDefenderClient.swift; sourceTree = "<group>"; };
+		A20000050 /* ScamAIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScamAIClient.swift; sourceTree = "<group>"; };
+		A20000033 /* AIImageDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIImageDetector.swift; sourceTree = "<group>"; };
+		A20000034 /* PhotoVerificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoVerificationViewModel.swift; sourceTree = "<group>"; };
+		A20000035 /* PhotoResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoResultView.swift; sourceTree = "<group>"; };
+		A20000036 /* HistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryListView.swift; sourceTree = "<group>"; };
+		A20000037 /* HistoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryDetailView.swift; sourceTree = "<group>"; };
+		A20000038 /* BrandedNavTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandedNavTitle.swift; sourceTree = "<group>"; };
+		A20000039 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A20000040 /* ConsentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentManager.swift; sourceTree = "<group>"; };
+		A20000041 /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
+		A20000043 /* ConversationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationContext.swift; sourceTree = "<group>"; };
+		A20000044 /* EmbeddedKeyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedKeyProvider.swift; sourceTree = "<group>"; };
+		A20000045 /* MediaDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDetector.swift; sourceTree = "<group>"; };
+		A20000046 /* MediaVerificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaVerificationViewModel.swift; sourceTree = "<group>"; };
+		A20000047 /* AudioRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderView.swift; sourceTree = "<group>"; };
+		A20000048 /* VideoRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoRecorderView.swift; sourceTree = "<group>"; };
+		A20000049 /* MediaResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaResultView.swift; sourceTree = "<group>"; };
+		A30000001 /* ScamLlama.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScamLlama.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A40000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A50000001 = {
+			isa = PBXGroup;
+			children = (
+				A50000002 /* ScamLlama */,
+				A50000099 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A50000002 /* ScamLlama */ = {
+			isa = PBXGroup;
+			children = (
+				A50000003 /* App */,
+				A50000004 /* Models */,
+				A50000005 /* Services */,
+				A50000006 /* ViewModels */,
+				A50000007 /* Views */,
+				A50000008 /* Resources */,
+				A50000009 /* Utilities */,
+			);
+			path = ScamLlama;
+			sourceTree = "<group>";
+		};
+		A50000003 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A20000001 /* ScamLlamaApp.swift */,
+				A20000002 /* ContentView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A50000004 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A20000003 /* Enums.swift */,
+				A20000004 /* AnalysisResult.swift */,
+				A20000005 /* ChecklistItem.swift */,
+				A20000006 /* ChecklistSession.swift */,
+				A20000007 /* Conversation.swift */,
+				A20000043 /* ConversationContext.swift */,
+				A20000008 /* PhotoCheck.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A50000005 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A20000009 /* ChecklistScorer.swift */,
+				A20000022 /* APIKeyManager.swift */,
+				A20000023 /* ClaudeAPIClient.swift */,
+				A20000024 /* LocalPatternScanner.swift */,
+				A20000042 /* LocalImageAnalyzer.swift */,
+				A24309511346AB3471501D3D /* ForceUpdateChecker.swift */,
+				A20000025 /* ScamAnalysisEngine.swift */,
+				A20000031 /* OCRService.swift */,
+				A20000032 /* RealityDefenderClient.swift */,
+				A20000050 /* ScamAIClient.swift */,
+				A20000033 /* AIImageDetector.swift */,
+				A20000040 /* ConsentManager.swift */,
+				A20000044 /* EmbeddedKeyProvider.swift */,
+				A20000045 /* MediaDetector.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A50000006 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A20000010 /* ChecklistViewModel.swift */,
+				A20000026 /* ChatAnalysisViewModel.swift */,
+				A20000027 /* SettingsViewModel.swift */,
+				A20000034 /* PhotoVerificationViewModel.swift */,
+				A20000046 /* MediaVerificationViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A50000007 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A50000010 /* Dashboard */,
+				A50000011 /* ChatAnalysis */,
+				A50000012 /* PhotoVerification */,
+				A50000013 /* Checklist */,
+				A50000016 /* History */,
+				A50000015 /* Settings */,
+				A50000014 /* Components */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A50000008 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A20000020 /* ChecklistData.json */,
+				A20000021 /* Assets.xcassets */,
+				A20000039 /* PrivacyInfo.xcprivacy */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A50000009 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				A20000018 /* Constants.swift */,
+				A20000019 /* Extensions.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		A50000010 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				A20000014 /* DashboardView.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		A50000011 /* ChatAnalysis */ = {
+			isa = PBXGroup;
+			children = (
+				A20000015 /* ChatAnalysisView.swift */,
+				A20000028 /* ChatResultView.swift */,
+			);
+			path = ChatAnalysis;
+			sourceTree = "<group>";
+		};
+		A50000012 /* PhotoVerification */ = {
+			isa = PBXGroup;
+			children = (
+				A20000016 /* MediaVerificationView.swift */,
+				A20000035 /* PhotoResultView.swift */,
+				A20000047 /* AudioRecorderView.swift */,
+				A20000048 /* VideoRecorderView.swift */,
+				A20000049 /* MediaResultView.swift */,
+			);
+			path = PhotoVerification;
+			sourceTree = "<group>";
+		};
+		A50000013 /* Checklist */ = {
+			isa = PBXGroup;
+			children = (
+				A20000011 /* ChecklistView.swift */,
+				A20000012 /* ChecklistResultView.swift */,
+			);
+			path = Checklist;
+			sourceTree = "<group>";
+		};
+		A50000014 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A20000013 /* RiskGaugeView.swift */,
+				A20000029 /* LoadingAnalysisView.swift */,
+				A20000030 /* PatternCardView.swift */,
+				A20000038 /* BrandedNavTitle.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		A50000015 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A20000017 /* SettingsView.swift */,
+				A20000041 /* PrivacyPolicyView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		A50000016 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				A20000036 /* HistoryListView.swift */,
+				A20000037 /* HistoryDetailView.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		A50000099 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A30000001 /* ScamLlama.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A60000001 /* ScamLlama */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000001 /* Build configuration list for PBXNativeTarget "ScamLlama" */;
+			buildPhases = (
+				A70000001 /* Sources */,
+				A40000001 /* Frameworks */,
+				A70000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ScamLlama;
+			productName = ScamLlama;
+			productReference = A30000001 /* ScamLlama.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A90000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A60000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A80000002 /* Build configuration list for PBXProject "ScamLlama" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A50000001;
+			productRefGroup = A50000099 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A60000001 /* ScamLlama */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A70000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000020 /* ChecklistData.json in Resources */,
+				A10000021 /* Assets.xcassets in Resources */,
+				A10000039 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A70000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000001 /* ScamLlamaApp.swift in Sources */,
+				A10000002 /* ContentView.swift in Sources */,
+				A10000003 /* Enums.swift in Sources */,
+				A10000004 /* AnalysisResult.swift in Sources */,
+				A10000005 /* ChecklistItem.swift in Sources */,
+				A10000006 /* ChecklistSession.swift in Sources */,
+				A10000007 /* Conversation.swift in Sources */,
+				A10000043 /* ConversationContext.swift in Sources */,
+				A10000008 /* PhotoCheck.swift in Sources */,
+				A10000009 /* ChecklistScorer.swift in Sources */,
+				A10000010 /* ChecklistViewModel.swift in Sources */,
+				A10000011 /* ChecklistView.swift in Sources */,
+				A10000012 /* ChecklistResultView.swift in Sources */,
+				A10000013 /* RiskGaugeView.swift in Sources */,
+				A10000014 /* DashboardView.swift in Sources */,
+				A10000015 /* ChatAnalysisView.swift in Sources */,
+				A10000016 /* MediaVerificationView.swift in Sources */,
+				A10000017 /* SettingsView.swift in Sources */,
+				A10000018 /* Constants.swift in Sources */,
+				A10000019 /* Extensions.swift in Sources */,
+				A10000022 /* APIKeyManager.swift in Sources */,
+				A10000023 /* ClaudeAPIClient.swift in Sources */,
+				A10000024 /* LocalPatternScanner.swift in Sources */,
+				A10000042 /* LocalImageAnalyzer.swift in Sources */,
+				A2A6FA646622F3ABFF4AD9E3 /* ForceUpdateChecker.swift in Sources */,
+				A10000025 /* ScamAnalysisEngine.swift in Sources */,
+				A10000026 /* ChatAnalysisViewModel.swift in Sources */,
+				A10000027 /* SettingsViewModel.swift in Sources */,
+				A10000028 /* ChatResultView.swift in Sources */,
+				A10000029 /* LoadingAnalysisView.swift in Sources */,
+				A10000030 /* PatternCardView.swift in Sources */,
+				A10000031 /* OCRService.swift in Sources */,
+				A10000032 /* RealityDefenderClient.swift in Sources */,
+				A10000050 /* ScamAIClient.swift in Sources */,
+				A10000033 /* AIImageDetector.swift in Sources */,
+				A10000034 /* PhotoVerificationViewModel.swift in Sources */,
+				A10000035 /* PhotoResultView.swift in Sources */,
+				A10000036 /* HistoryListView.swift in Sources */,
+				A10000037 /* HistoryDetailView.swift in Sources */,
+				A10000038 /* BrandedNavTitle.swift in Sources */,
+				A10000040 /* ConsentManager.swift in Sources */,
+				A10000041 /* PrivacyPolicyView.swift in Sources */,
+				A10000044 /* EmbeddedKeyProvider.swift in Sources */,
+				A10000045 /* MediaDetector.swift in Sources */,
+				A10000046 /* MediaVerificationViewModel.swift in Sources */,
+				A10000047 /* AudioRecorderView.swift in Sources */,
+				A10000048 /* VideoRecorderView.swift in Sources */,
+				A10000049 /* MediaResultView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B10000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B10000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B20000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ScamLlama/ScamLlama.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = Q73RN5N9Y2;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScamLlama/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Love Llama";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Love Llama needs access to your photos so you can select screenshots of conversations to analyze and profile photos to verify.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.scamllama.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B20000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ScamLlama/ScamLlama.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = Q73RN5N9Y2;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScamLlama/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Love Llama";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Love Llama needs access to your photos so you can select screenshots of conversations to analyze and profile photos to verify.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.scamllama.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A80000001 /* Build configuration list for PBXNativeTarget "ScamLlama" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B20000001 /* Debug */,
+				B20000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A80000002 /* Build configuration list for PBXProject "ScamLlama" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000001 /* Debug */,
+				B10000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A90000001 /* Project object */;
+}
