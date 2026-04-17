@@ -1,8 +1,8 @@
 import Foundation
 
 struct ForceUpdateChecker {
-    static let appStoreID = "6759401280"
-    static let versionURL = URL(string: "https://gist.githubusercontent.com/mkonopinski810/dc598476815a301faeccde950194ece9/raw/version.json")!
+    static let appStoreID = "0000000000" // TODO: Update after App Store submission
+    static let versionURL = URL(string: "https://gist.githubusercontent.com/Luelma/e2d7d16bf62e84e14ed436a926a2dc9e/raw/version.json")!
 
     struct VersionInfo: Decodable {
         let minimum_version: String

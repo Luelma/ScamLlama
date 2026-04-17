@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love Llama - Support</title>
+    <title>Scam Llama - Support</title>
     <style>
         :root {
-            --purple: #8C1C87;
-            --red: #ED4545;
-            --bg: #FDF6FF;
+            --navy: #122242;
+            --teal: #21896B;
+            --bg: #F5F8FA;
             --text: #2D2D2D;
             --muted: #6B6B6B;
         }
@@ -20,100 +20,82 @@
             line-height: 1.7;
         }
         .header {
-            background: linear-gradient(135deg, var(--purple), var(--red));
+            background: linear-gradient(135deg, var(--navy), var(--teal));
             color: white;
             padding: 60px 20px 40px;
             text-align: center;
         }
         .header h1 { font-size: 2.2em; margin-bottom: 8px; }
-        .header p { opacity: 0.9; font-size: 1.1em; }
-        .container {
-            max-width: 720px;
-            margin: 0 auto;
-            padding: 40px 20px 80px;
-        }
-        h2 {
-            color: var(--purple);
-            font-size: 1.4em;
-            margin-top: 36px;
-            margin-bottom: 12px;
-            padding-bottom: 6px;
-            border-bottom: 2px solid #F0E0F0;
-        }
-        p, ul { margin-bottom: 16px; }
-        ul { padding-left: 24px; }
-        li { margin-bottom: 8px; }
-        .card {
+        .header p { opacity: 0.85; font-size: 1.1em; }
+        .content { max-width: 720px; margin: 0 auto; padding: 40px 20px; }
+        h2 { color: var(--navy); margin: 32px 0 12px; font-size: 1.4em; }
+        h3 { color: var(--teal); margin: 20px 0 8px; }
+        p, li { margin-bottom: 12px; font-size: 1.05em; }
+        a { color: var(--teal); }
+        .contact-card {
             background: white;
+            border: 1px solid #E0E6ED;
             border-radius: 12px;
             padding: 24px;
             margin: 20px 0;
-            box-shadow: 0 2px 12px rgba(140, 28, 135, 0.08);
         }
-        .card h3 { color: var(--purple); margin-bottom: 8px; }
-        a { color: var(--purple); }
-        .footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--muted);
-            font-size: 0.9em;
-            border-top: 1px solid #E8D8E8;
-        }
+        .faq-item { margin-bottom: 24px; }
+        .footer { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 0.9em; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Love Llama</h1>
-        <p>Support</p>
+        <h1>Scam Llama Support</h1>
+        <p>How can we help?</p>
     </div>
-
-    <div class="container">
-        <h2>Contact Us</h2>
-        <div class="card">
-            <h3>Email Support</h3>
-            <p>For bugs, feature requests, or general questions:</p>
-            <p><a href="mailto:lovellama.app@gmail.com">lovellama.app@gmail.com</a></p>
+    <div class="content">
+        <div class="contact-card">
+            <h2 style="margin-top:0">Contact Us</h2>
+            <p>Email: <a href="mailto:info@harrieriq.com">info@harrieriq.com</a></p>
+            <p>We typically respond within 24-48 hours.</p>
         </div>
 
         <h2>Frequently Asked Questions</h2>
 
-        <div class="card">
-            <h3>Do I need API keys to use Love Llama?</h3>
-            <p>No! All features work fully offline without any API keys. Chat analysis uses a built-in local pattern scanner, photo verification uses on-device image analysis via Apple's Vision framework, and the Red Flag Checklist is entirely local. Photo and video verification also includes built-in Reality Defender and Scam.ai deepfake detection at no cost. Adding an Anthropic API key for chat analysis enhances accuracy with AI-powered analysis, but it's completely optional.</p>
+        <div class="faq-item">
+            <h3>What does Scam Llama detect?</h3>
+            <p>Scam Llama scans text for 300+ patterns across 35 financial scam types including tech support scams, phishing, crypto/investment fraud, fake job offers, lottery scams, government impersonation, bank fraud, and more. It also verifies photos, videos, and audio for deepfakes.</p>
         </div>
 
-        <div class="card">
-            <h3>Where can I get API keys?</h3>
+        <div class="faq-item">
+            <h3>Do I need an API key?</h3>
+            <p>No. Scam Llama works offline with local pattern scanning and the interactive checklist. For AI-powered deep analysis, you can optionally add your own Anthropic Claude API key in Settings. Photo/video/audio deepfake detection works out of the box.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Is my data private?</h3>
+            <p>Yes. All local analysis happens on your device. If you use AI analysis, only the text you submit is sent to Anthropic's API — no personal identifiers. We have no servers, no accounts, no analytics. See our <a href="index.html">Privacy Policy</a>.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>How accurate is the detection?</h3>
+            <p>Scam Llama uses pattern matching and AI analysis to identify known scam tactics. It's a tool to help you spot red flags — not a guarantee. Always use your judgment and consult trusted sources before making financial decisions.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>I think I've been scammed. What should I do?</h3>
+            <p>If you've sent money or shared personal information:</p>
             <ul>
-                <li><strong>Anthropic:</strong> <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></li>
-                <li><strong>Reality Defender:</strong> <a href="https://app.realitydefender.ai" target="_blank">app.realitydefender.ai</a></li>
+                <li>Contact your bank immediately to attempt to reverse transactions</li>
+                <li>Change passwords on any compromised accounts</li>
+                <li>Report to the FTC at <a href="https://reportfraud.ftc.gov">reportfraud.ftc.gov</a></li>
+                <li>File a report with the FBI's IC3 at <a href="https://www.ic3.gov">ic3.gov</a></li>
+                <li>Consider placing a credit freeze with all three credit bureaus</li>
             </ul>
         </div>
 
-        <div class="card">
-            <h3>Is my data safe?</h3>
-            <p>Yes. All data is stored locally on your device with iOS encryption. API keys are stored in the secure Keychain. We don't collect analytics or track your usage. See our <a href="index.html">Privacy Policy</a> for details.</p>
-        </div>
-
-        <div class="card">
-            <h3>How do I delete my data?</h3>
-            <p>Go to Settings &rarr; Data &amp; Privacy &rarr; Delete All Data. This removes all conversations, photo checks, checklist sessions, and API keys. Alternatively, uninstalling the app removes all local data.</p>
-        </div>
-
-        <div class="card">
-            <h3>Does Love Llama work without internet?</h3>
-            <p>Yes! Core features work fully offline. Chat analysis uses a local pattern scanner with 300+ romance scam indicators. Photo verification uses on-device image analysis powered by Apple's Vision framework. The Red Flag Checklist is entirely local. With internet, photos and videos are also analyzed by Reality Defender and Scam.ai for enhanced deepfake detection.</p>
-        </div>
-
-        <div class="card">
-            <h3>What data is shared with third parties?</h3>
-            <p>Only when you explicitly approve sharing at the point of use. Chat text can be sent to Anthropic's Claude API (requires your own API key). Photos and videos can be sent to Reality Defender and Scam.ai for deepfake detection (built-in keys, no setup needed). You're always asked before any data leaves your device, and for photos you can choose "Analyze On-Device Only" instead. See our <a href="index.html">Privacy Policy</a> for full details.</p>
+        <div class="faq-item">
+            <h3>What's the difference between Scam Llama and Love Llama?</h3>
+            <p>Love Llama focuses specifically on romance scam detection in dating contexts. Scam Llama covers all types of financial scams — phishing, investment fraud, impersonation, job scams, and more. Same great technology, different focus.</p>
         </div>
     </div>
-
     <div class="footer">
-        <p>&copy; 2026 Love Llama. All rights reserved.</p>
-        <p><a href="index.html">Privacy Policy</a></p>
+        &copy; 2026 Scam Llama. All rights reserved.
     </div>
 </body>
 </html>
